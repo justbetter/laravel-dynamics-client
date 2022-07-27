@@ -1,5 +1,5 @@
 {
-    "name": "just-better/laravel-dynamics-client",
+    "name": "justbetter/laravel-dynamics-client",
     "description": "A client to connect with Microsoft Dynamics",
     "type": "package",
     "authors": [
