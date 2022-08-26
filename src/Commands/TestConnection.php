@@ -17,6 +17,8 @@ class TestConnection extends Command
         $connection = $this->argument('connection') ?? config('dynamics.connection');
 
         $client = ClientFactory::make($connection)->fabricate();
+
+        /** @phpstan-ignore-next-line */
         $client->setEntityReturnType(false);
 
         /** @var ODataResponse $response */

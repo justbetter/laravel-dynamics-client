@@ -20,7 +20,7 @@ class ClientHttpProvider extends GuzzleHttpProvider
             return parent::send($request);
         } catch (RequestException $exception) {
             $message = $exception->hasResponse()
-                ? $exception->getResponse()->getBody()->getContents()
+                ? $exception->getResponse()?->getBody()?->getContents()
                 : $exception->getMessage();
 
             $code = $exception->getCode();

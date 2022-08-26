@@ -23,6 +23,7 @@
     },
     "require-dev": {
         "laravel/pint": "^1.1",
+        "nunomaduro/larastan": "^2.0",
         "orchestra/testbench": "^7.0",
         "phpunit/phpunit": "^9.5.10"
     },
@@ -37,7 +38,14 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "analyse": "phpstan",
+        "style": "pint",
+        "check": [
+            "@test",
+            "@analyse",
+            "@style"
+        ]
     },
     "config": {
         "sort-packages": true
