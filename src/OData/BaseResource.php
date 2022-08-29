@@ -14,6 +14,7 @@ use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
 use SaintSystems\OData\ODataClient;
 
+/** @phpstan-consistent-constructor */
 abstract class BaseResource implements ArrayAccess, Arrayable
 {
     use HasData;
@@ -105,7 +106,7 @@ abstract class BaseResource implements ArrayAccess, Arrayable
             ->map(fn (string $key): mixed => $this[$key])
             ->toArray();
 
-        $baseResource = static::query($this->connection, $this->endpoint)->find(...$values);
+        $baseResource = static::query($this->connection, $this->endpoint)->findOrFail(...$values);
 
         return $this->fromPage($baseResource);
     }
