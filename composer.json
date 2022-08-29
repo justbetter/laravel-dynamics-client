@@ -40,7 +40,7 @@
     "scripts": {
         "test": "phpunit",
         "analyse": "phpstan",
-        "style": "pint",
+        "style": "pint --test",
         "check": [
             "@test",
             "@analyse",
