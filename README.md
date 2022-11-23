@@ -1,4 +1,4 @@
-# Dynamics Client
+# Laravel Dynamics Client
 
 This package will connect you to your Microsoft Dynamics web services via OData. Custom web services can easily be
 implemented and mapped to your liking.
@@ -22,7 +22,7 @@ $items = Item::query()
 
 $customer = Customer::new()->create([
     'Name' => 'Jane Doe',
-])
+]);
 ```
 
 ## Installation
