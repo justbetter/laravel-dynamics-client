@@ -1,3 +1,5 @@
+<img src="art/banner.svg" alt="Banner">
+
 # Laravel Dynamics Client
 
 This package will connect you to your Microsoft Dynamics web services via OData. Custom web services can easily be
@@ -227,3 +229,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+<a href="https://justbetter.nl" title="JustBetter">
+    <img src="art/footer.svg" alt="JustBetter logo">
+</a>
