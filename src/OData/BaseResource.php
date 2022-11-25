@@ -28,8 +28,8 @@ abstract class BaseResource implements ArrayAccess, Arrayable
 
     public function __construct(?string $connection = null, ?string $endpoint = null)
     {
-        $this->connection = $connection ?? config('dynamics.connection');
-        $this->endpoint = $endpoint ?? config('dynamics.resources.'.static::class, Str::afterLast(static::class, '\\'));
+        $this->connection ??= $connection ?? config('dynamics.connection');
+        $this->endpoint ??= $endpoint ?? config('dynamics.resources.'.static::class, Str::afterLast(static::class, '\\'));
     }
 
     public static function new(?string $connection = null, ?string $endpoint = null): static
