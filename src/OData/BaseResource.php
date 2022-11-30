@@ -14,7 +14,6 @@ use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
 use SaintSystems\OData\ODataClient;
 
-/** @phpstan-consistent-constructor */
 abstract class BaseResource implements ArrayAccess, Arrayable
 {
     use HasData;
@@ -26,7 +25,7 @@ abstract class BaseResource implements ArrayAccess, Arrayable
 
     public string $endpoint;
 
-    public function __construct(?string $connection = null, ?string $endpoint = null)
+    final public function __construct(?string $connection = null, ?string $endpoint = null)
     {
         $this->connection ??= $connection ?? config('dynamics.connection');
         $this->endpoint ??= $endpoint ?? config('dynamics.resources.'.static::class, Str::afterLast(static::class, '\\'));
