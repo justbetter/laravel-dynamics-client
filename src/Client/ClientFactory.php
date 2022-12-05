@@ -63,7 +63,7 @@ class ClientFactory
         return $this;
     }
 
-    public function etag(string $etag = null): static
+    public function etag(string $etag): static
     {
         $this->header('If-Match', $etag);
 
