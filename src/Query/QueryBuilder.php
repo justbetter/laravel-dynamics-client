@@ -79,8 +79,18 @@ class QueryBuilder
         /** @var BaseResource $baseResource */
         $baseResource = app($class);
 
+        $combined = array_combine($baseResource->primaryKey, $values);
+
+        foreach ($combined as $key => $value) {
+            if ($baseResource->getCastType($key) === 'date') {
+                $this->builder->whereDate($key, '=', $value);
+            } else {
+                $this->builder->where($key, '=', $value);
+            }
+        }
+
         /** @var ?Entity $entity */
-        $entity = $this->builder->where(array_combine($baseResource->primaryKey, $values))->first();
+        $entity = $this->builder->first();
 
         return is_null($entity)
             ? null
