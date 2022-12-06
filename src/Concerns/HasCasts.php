@@ -6,9 +6,14 @@ trait HasCasts
 {
     public array $casts = [];
 
+    public function getCastType(string $key): ?string
+    {
+        return $this->casts[$key] ?? null;
+    }
+
     public function cast(string $key, mixed $value): string
     {
-        return match ($this->casts[$key] ?? null) {
+        return match ($this->getCastType($key)) {
             'int', 'date', 'decimal' => (string) $value,
             default => '\''.$value.'\'',
         };
