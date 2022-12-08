@@ -18,6 +18,13 @@ trait HasData
         return $this;
     }
 
+    public function merge(array $data): static
+    {
+        $this->data = array_merge($this->data, $data);
+
+        return $this;
+    }
+
     public function offsetExists(mixed $offset): bool
     {
         return array_key_exists($offset, $this->data);
