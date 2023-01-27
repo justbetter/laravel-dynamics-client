@@ -37,12 +37,17 @@ class QueryBuilder
         return $this;
     }
 
-    public function mapToClass(Entity $entity): BaseResource
+    public function newResourceInstance(): BaseResource
     {
         /** @var class-string<BaseResource> $class */
         $class = $this->class;
 
-        return $class::new($this->connection, $this->endpoint)->fromEntity($entity);
+        return $class::new($this->connection, $this->endpoint);
+    }
+
+    public function mapToClass(Entity $entity): BaseResource
+    {
+        return $this->newResourceInstance()->fromEntity($entity);
     }
 
     public function get(): Enumerable
@@ -73,11 +78,7 @@ class QueryBuilder
 
     public function find(mixed ...$values): ?BaseResource
     {
-        /** @var class-string<BaseResource> $class */
-        $class = $this->class;
-
-        /** @var BaseResource $baseResource */
-        $baseResource = app($class);
+        $baseResource = $this->newResourceInstance();
 
         $combined = array_combine($baseResource->primaryKey, $values);
 
@@ -106,6 +107,20 @@ class QueryBuilder
         }
 
         return $resource;
+    }
+
+    public function firstOrCreate(array $attributes = [], array $values = []): BaseResource
+    {
+        /** @var ?BaseResource $resource */
+        $resource = $this->where($attributes)->first();
+
+        if ($resource !== null) {
+            return $resource;
+        }
+
+        $data = array_merge($attributes, $values);
+
+        return $this->newResourceInstance()->create($data);
     }
 
     public function lazy(): LazyCollection

@@ -10,6 +10,7 @@ use JustBetter\DynamicsClient\Concerns\CanBeSerialized;
 use JustBetter\DynamicsClient\Concerns\HasCasts;
 use JustBetter\DynamicsClient\Concerns\HasData;
 use JustBetter\DynamicsClient\Concerns\HasKeys;
+use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
 use SaintSystems\OData\ODataClient;
@@ -28,7 +29,8 @@ abstract class BaseResource implements ArrayAccess, Arrayable
     final public function __construct(?string $connection = null, ?string $endpoint = null)
     {
         $this->connection ??= $connection ?? config('dynamics.connection');
-        $this->endpoint ??= $endpoint ?? config('dynamics.resources.'.static::class, Str::afterLast(static::class, '\\'));
+        $this->endpoint ??= $endpoint ?? config('dynamics.resources.'.static::class,
+            Str::afterLast(static::class, '\\'));
     }
 
     public static function new(?string $connection = null, ?string $endpoint = null): static
@@ -69,15 +71,16 @@ abstract class BaseResource implements ArrayAccess, Arrayable
         return $this;
     }
 
-    public function create(array $data): ?static
+    public function create(array $data): static
     {
         /** @var array<int, Entity> $entities */
         $entities = $this->client()->post($this->endpoint, $data);
 
         if (empty($entities)) {
-            return null;
+            throw new DynamicsException('No data returned after creation');
         }
 
+        /** @var Entity $entity */
         $entity = reset($entities);
 
         return static::new($this->connection, $this->endpoint)->fromEntity($entity);
