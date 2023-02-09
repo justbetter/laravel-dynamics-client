@@ -1,5 +1,13 @@
 # Changelog 
 
+## 1.1.0 - 2023-02-09
+
+## What's Changed
+* Fake requests to Dynamics by @ramonrietdijk in https://github.com/justbetter/laravel-dynamics-client/pull/10
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.0.5...1.1.0
+
 ## 1.0.5 - 2023-01-27
 
 ## What's Changed
