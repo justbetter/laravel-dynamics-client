@@ -5,7 +5,8 @@
 # Laravel Dynamics Client
 
 This package will connect you to your Microsoft Dynamics web services via OData. Custom web services can easily be
-implemented and mapped to your liking.
+implemented and mapped to your liking. It uses the [HTTP client](https://laravel.com/docs/master/http-client) of Laravel
+which means that you can easily fake requests when writing tests.
 
 The way we interact with OData has been inspired by Laravel's Query Builder.
 
@@ -212,6 +213,49 @@ You can run the following command to check if you can successfully connect to Dy
 
 ```shell
 php artisan dynamics:connect {connection?}
+```
+
+## Fake requests to Dynamics
+
+When writing tests you may find yourself in the need of faking a request to Dynamics. Luckily, this packages uses the
+HTTP client of Laravel to make this very easy.
+
+In order to fake all requests to Dynamics, you can call the method `fake` on any resource.
+
+> The `fake` method will fake **all** requests to Dynamics, not just the endpoint of the used resource.
+
+```php
+<?php
+
+use JustBetter\DynamicsClient\OData\BaseResource;
+
+BaseResource::fake();
+```
+
+This method will fake the Dynamics configuration and removes sensitive information like usernames and passwords. Only
+the company name will remain in order to easily test with multiple connections.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Http;
+use JustBetter\DynamicsClient\OData\Pages\Item;
+
+Item::fake();
+
+Http::fake([
+    'dynamics/ODataV4/Company(\'default\')/Item?$top=1' => Http::response([
+        'value' => [
+            [
+                '@odata.etag' => '::etag::',
+                'No' => '::no::',
+                'Description' => '::description::',
+            ],
+        ],
+    ]),
+]);
+
+$item = Item::query()->first();
 ```
 
 ## Contributing

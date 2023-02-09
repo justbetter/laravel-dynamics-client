@@ -135,4 +135,15 @@ abstract class BaseResource implements ArrayAccess, Arrayable
     {
         return new QueryBuilder($this->client(), $this->connection, $this->endpoint, static::class);
     }
+
+    public static function fake(): void
+    {
+        foreach (config('dynamics.connections') as $connection => $data) {
+            config()->set('dynamics.connections.'.$connection.'.base_url', 'dynamics');
+            config()->set('dynamics.connections.'.$connection.'.version', 'ODataV4');
+            config()->set('dynamics.connections.'.$connection.'.company', $data['company'] ?? $connection);
+            config()->set('dynamics.connections.'.$connection.'.username', 'username');
+            config()->set('dynamics.connections.'.$connection.'.password', 'password');
+        }
+    }
 }
