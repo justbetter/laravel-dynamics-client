@@ -25,6 +25,7 @@ class FakeResourceTest extends TestCase
             ]),
         ]);
 
+        /** @var Item $item */
         $item = Item::query()->first();
 
         $this->assertEquals('::no::', $item['No']);
