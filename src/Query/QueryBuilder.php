@@ -142,7 +142,9 @@ class QueryBuilder
 
                 $hasNext = $records->count() === $pageSize;
 
-                yield from $records;
+                foreach ($records as $record) {
+                    yield $record;
+                }
 
                 $page++;
             }
