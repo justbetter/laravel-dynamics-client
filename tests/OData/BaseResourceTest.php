@@ -18,10 +18,12 @@ class BaseResourceTest extends TestCase
 
         config()->set('dynamics.connections.::default::', [
             'base_url' => '::base_url::',
+            'version' => 'ODataV4',
             'company' => '::company::',
             'username' => '::username::',
             'password' => '::password::',
             'auth' => '::auth::',
+            'page_size' => 1000,
             'options' => [
                 'connect_timeout' => 5,
             ],
@@ -29,10 +31,12 @@ class BaseResourceTest extends TestCase
 
         config()->set('dynamics.connections.::other-connection::', [
             'base_url' => '::base_url::',
+            'version' => 'ODataV4',
             'company' => '::company::',
             'username' => '::username::',
             'password' => '::password::',
             'auth' => '::auth::',
+            'page_size' => 1000,
             'options' => [
                 'connect_timeout' => 5,
             ],
