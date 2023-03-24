@@ -117,7 +117,15 @@ abstract class BaseResource implements ArrayAccess, Arrayable
 
     public function etag(bool $force = false): string
     {
-        return $force ? '*' : $this->data['@odata.etag'];
+        if ($force) {
+            return '*';
+        }
+
+        $version = config('dynamics.connections.'.$this->connection.'.version');
+
+        return $version === 'ODataV4'
+            ? $this->data['@odata.etag']
+            : $this->data['odata.etag'];
     }
 
     public function client(?string $etag = null): ODataClient
