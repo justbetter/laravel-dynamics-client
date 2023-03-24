@@ -1,6 +1,15 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.2.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.2.1...main)
+## [1.2.1](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.2.1) - 2023-03-24
+
+### What's Changed
+* Use correct etag key for < ODataV4 by @ramonrietdijk in https://github.com/justbetter/laravel-dynamics-client/pull/13
+* The lazy method accepts a pageSize and is always casted to an integer by @ramonrietdijk in https://github.com/justbetter/laravel-dynamics-client/pull/14
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.2.0...1.2.1
+
 ## [1.2.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.2.0) - 2023-03-10
 
 ### What's Changed
