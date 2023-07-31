@@ -12,7 +12,34 @@ use SaintSystems\OData\Entity;
 use SaintSystems\OData\ODataClient;
 use SaintSystems\OData\Query\Builder;
 
-/** @mixin Builder */
+/**
+ * @method static select(array|mixed $properties = [])
+ * @method static addSelect(array|mixed $select)
+ * @method static from(string $entitySet)
+ * @method static whereKey(string $id)
+ * @method static expand(array $properties = [])
+ * @method static order(array|mixed $properties = [])
+ * @method static orderBySQL(string $sql = '')
+ * @method static mergeWheres(array $wheres, array $bindings)
+ * @method static where(string|array|\Closure $column, string $operator = null, mixed $value = null, string $boolean = 'and')
+ * @method static orWhere(string|array|\Closure $column, string $operator = null, mixed $value = null)
+ * @method static whereRaw(string $rawString, string $boolean = 'and')
+ * @method static orWhereRaw(string $rawString)
+ * @method static whereDate(string|array|\Closure $column, string $operator = null, mixed $value = null, string $boolean = 'and')
+ * @method static orWhereDate(string|array|\Closure $column, string $operator = null, mixed $value = null)
+ * @method static whereColumn(string|array $first, string $operator = null, string $second = null, string $boolean = 'and')
+ * @method static orWhereColumn(string|array $first, string $operator = null, string $second = null)
+ * @method static whereNested(\Closure $callback, string $boolean = 'and')
+ * @method static forNestedWhere()
+ * @method static addNestedWhereQuery(self $query, string $boolean = 'and')
+ * @method static whereNull(string $column, string $boolean = 'and', bool $not = false)
+ * @method static orWhereNull(string $column)
+ * @method static whereNotNull(string $column, string $boolean = 'and')
+ * @method static orWhereNotNull(string $column)
+ * @method static skip(int $value)
+ * @method static take(int $value)
+ * @method static addBinding(mixed $value, string $type = 'where')
+ */
 class QueryBuilder
 {
     protected Builder $builder;
