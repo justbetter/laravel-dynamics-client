@@ -150,7 +150,7 @@ class QueryBuilder
         return $this->newResourceInstance()->create($data);
     }
 
-    public function lazy(?int $pageSize = null): LazyCollection
+    public function lazy(int $pageSize = null): LazyCollection
     {
         return LazyCollection::make(function () use ($pageSize): Generator {
             $pageSize ??= (int) config('dynamics.connections.'.$this->connection.'.page_size');
