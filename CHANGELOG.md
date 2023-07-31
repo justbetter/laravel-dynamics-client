@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.2.1...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.2.2...main)
+## [1.2.2](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.2.2) - 2023-07-31
+
+### What's Changed
+* Added an improved doc block to the QueryBuilder by @ramonrietdijk in https://github.com/justbetter/laravel-dynamics-client/pull/15
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.2.1...1.2.2
+
 ## [1.2.1](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.2.1) - 2023-03-24
 
 ### What's Changed
