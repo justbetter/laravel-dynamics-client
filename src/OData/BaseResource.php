@@ -15,12 +15,12 @@ use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
 use SaintSystems\OData\ODataClient;
 
-abstract class BaseResource implements ArrayAccess, Arrayable
+abstract class BaseResource implements Arrayable, ArrayAccess
 {
+    use CanBeSerialized;
+    use HasCasts;
     use HasData;
     use HasKeys;
-    use HasCasts;
-    use CanBeSerialized;
 
     public string $connection;
 
