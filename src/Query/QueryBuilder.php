@@ -178,6 +178,15 @@ class QueryBuilder
         });
     }
 
+    public function count(): int
+    {
+        /** @var ?int $count */
+        $count = $this->builder->take(1)->count();
+        $count ??= 0;
+
+        return $count;
+    }
+
     public function limit(int $limit): static
     {
         $this->builder->take($limit);
