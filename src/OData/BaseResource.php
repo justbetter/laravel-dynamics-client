@@ -26,6 +26,8 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public string $endpoint;
 
+    protected ?ODataClient $client;
+
     final public function __construct(string $connection = null, string $endpoint = null)
     {
         $this->connection ??= $connection ?? config('dynamics.connection');
@@ -53,6 +55,13 @@ abstract class BaseResource implements Arrayable, ArrayAccess
     public function setEndpoint(string $endpoint): static
     {
         $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    public function setClient(ODataClient $client): static
+    {
+        $this->client = $client;
 
         return $this;
     }
@@ -130,13 +139,17 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public function client(string $etag = null): ODataClient
     {
-        $factory = ClientFactory::make($this->connection);
+        if (!isset($this->client)) {
+            $factory = ClientFactory::make($this->connection);
 
-        if ($etag) {
-            $factory->etag($etag);
+            if ($etag) {
+                $factory->etag($etag);
+            }
+
+            $this->client = $factory->fabricate();
         }
 
-        return $factory->fabricate();
+        return $this->client;
     }
 
     public function newQuery(): QueryBuilder
