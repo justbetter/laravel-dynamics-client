@@ -144,6 +144,11 @@ abstract class BaseResource implements Arrayable, ArrayAccess
         return new QueryBuilder($this->client(), $this->connection, $this->endpoint, static::class);
     }
 
+    public function relation(string $relation, string $class): QueryBuilder
+    {
+        return new QueryBuilder($this->client(), $this->connection, $this->getResourceUrl().'/'.$relation, $class);
+    }
+
     public static function fake(): void
     {
         foreach (config('dynamics.connections') as $connection => $data) {

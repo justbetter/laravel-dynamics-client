@@ -164,6 +164,22 @@ $customers = Customer::query()
 
 See the `QueryBuilder` class for all available methods.
 
+## Relations
+
+Any relations published on a page can be accessed as well using the resource.
+
+```php
+$salesOrder = SalesOrder::query()->first();
+
+// Get the lines via the "relation" method.
+$salesLines = $salesOrder->relation('Relation_Name', SalesLine::class)->get();
+
+// Or use the "lines" helper on the SalesOrder.
+$salesLines = $salesOrder->lines('Relation_Name')->get();
+```
+
+Note that the `relation` method itself returns an instance of a query builder. This means that you can add additional where-clauses like you would be able to on a regular resource.
+
 ## Creating records
 
 Create a new record.
