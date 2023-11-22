@@ -23,9 +23,11 @@ class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    protected function bindResolvers()
+    protected function bindResolvers(): static
     {
         $this->app->bind(ClientFactoryContract::class, ClientFactory::class);
+
+        return $this;
     }
 
     public function boot(): void

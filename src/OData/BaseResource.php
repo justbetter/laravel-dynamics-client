@@ -130,6 +130,7 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public function client(string $etag = null): ODataClient
     {
+        /** @var ClientFactoryContract $factory */
         $factory = app(ClientFactoryContract::class, ['connection' => $this->connection]);
 
         if ($etag) {
