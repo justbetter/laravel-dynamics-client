@@ -2,15 +2,18 @@
 
 namespace JustBetter\DynamicsClient;
 
-use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use JustBetter\DynamicsClient\Client\ClientFactory;
 use JustBetter\DynamicsClient\Commands\TestConnection;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
         $this
-            ->registerConfig();
+            ->registerConfig()
+            ->bindResolvers();
     }
 
     protected function registerConfig(): static
@@ -18,6 +21,11 @@ class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/dynamics.php', 'dynamics');
 
         return $this;
+    }
+
+    protected function bindResolvers()
+    {
+        $this->app->bind(ClientFactoryContract::class, ClientFactory::class);
     }
 
     public function boot(): void

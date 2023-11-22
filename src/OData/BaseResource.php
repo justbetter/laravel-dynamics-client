@@ -5,11 +5,11 @@ namespace JustBetter\DynamicsClient\OData;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
-use JustBetter\DynamicsClient\Client\ClientFactory;
 use JustBetter\DynamicsClient\Concerns\CanBeSerialized;
 use JustBetter\DynamicsClient\Concerns\HasCasts;
 use JustBetter\DynamicsClient\Concerns\HasData;
 use JustBetter\DynamicsClient\Concerns\HasKeys;
+use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
@@ -25,8 +25,6 @@ abstract class BaseResource implements Arrayable, ArrayAccess
     public string $connection;
 
     public string $endpoint;
-
-    protected ?ODataClient $client;
 
     final public function __construct(string $connection = null, string $endpoint = null)
     {
@@ -55,13 +53,6 @@ abstract class BaseResource implements Arrayable, ArrayAccess
     public function setEndpoint(string $endpoint): static
     {
         $this->endpoint = $endpoint;
-
-        return $this;
-    }
-
-    public function setClient(ODataClient $client): static
-    {
-        $this->client = $client;
 
         return $this;
     }
@@ -139,17 +130,13 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public function client(string $etag = null): ODataClient
     {
-        if (!isset($this->client)) {
-            $factory = ClientFactory::make($this->connection);
+        $factory = app(ClientFactoryContract::class, ['connection' => $this->connection]);
 
-            if ($etag) {
-                $factory->etag($etag);
-            }
-
-            $this->client = $factory->fabricate();
+        if ($etag) {
+            $factory->etag($etag);
         }
 
-        return $this->client;
+        return $factory->fabricate();
     }
 
     public function newQuery(): QueryBuilder
