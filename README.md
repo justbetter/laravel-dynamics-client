@@ -231,6 +231,58 @@ You can run the following command to check if you can successfully connect to Dy
 php artisan dynamics:connect {connection?}
 ```
 
+## Extending
+
+If needed, it is possible to extend the provided `ClientFactory` class by creating your own. You **must** implement the `ClientFactoryContract` interface and its methods.
+
+
+```php
+use JustBetter\DynamicsClient\Exceptions\DynamicsException;
+use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
+
+class MyCustomClientFactory implements ClientFactoryContract
+{
+    public function __construct(public string $connection)
+    {
+        $config = config('dynamics.connections.'.$connection);
+
+        if (! $config) {
+            throw new DynamicsException(
+                __('Connection ":connection" does not exist', ['connection' => $connection])
+            );
+        }
+
+        $this
+            ->header('Authorization', 'Bearer ' . $config['access_token'])
+            ->header('Accept', 'application/json')
+            ->header('Content-Type', 'application/json');
+    }
+
+    ...
+}
+```
+
+You will then need to bind your custom factory as the implementation of the contract, in any of your `ServiceProvider` register method :
+
+```php
+<?php
+
+use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->bind(ClientFactoryContract::class, MyCustomClientFactory::class);
+    }
+}
+```
+
 ## Fake requests to Dynamics
 
 When writing tests you may find yourself in the need of faking a request to Dynamics. Luckily, this packages uses the

@@ -2,11 +2,12 @@
 
 namespace JustBetter\DynamicsClient\Client;
 
-use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use SaintSystems\OData\ODataClient;
+use JustBetter\DynamicsClient\Exceptions\DynamicsException;
+use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 
 /** @phpstan-consistent-constructor */
-class ClientFactory
+class ClientFactory implements ClientFactoryContract
 {
     public array $options = [];
 

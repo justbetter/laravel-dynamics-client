@@ -5,11 +5,11 @@ namespace JustBetter\DynamicsClient\OData;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
-use JustBetter\DynamicsClient\Client\ClientFactory;
 use JustBetter\DynamicsClient\Concerns\CanBeSerialized;
 use JustBetter\DynamicsClient\Concerns\HasCasts;
 use JustBetter\DynamicsClient\Concerns\HasData;
 use JustBetter\DynamicsClient\Concerns\HasKeys;
+use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
@@ -130,7 +130,8 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public function client(string $etag = null): ODataClient
     {
-        $factory = ClientFactory::make($this->connection);
+        /** @var ClientFactoryContract $factory */
+        $factory = app(ClientFactoryContract::class, ['connection' => $this->connection]);
 
         if ($etag) {
             $factory->etag($etag);
