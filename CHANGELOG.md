@@ -1,6 +1,16 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.4.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.5.0...main)
+## [1.5.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.5.0) - 2023-11-23
+
+### What's Changed
+* Allow overriding the ClientFactory to support alternative Authentification methods (such as OAuth) by @tgeorgel in https://github.com/justbetter/laravel-dynamics-client/pull/19
+
+### New Contributors
+* @tgeorgel made their first contribution in https://github.com/justbetter/laravel-dynamics-client/pull/19
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.4.0...1.5.0
+
 ## [1.4.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.4.0) - 2023-11-20
 
 ### What's Changed
