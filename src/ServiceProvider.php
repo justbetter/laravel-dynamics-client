@@ -2,9 +2,9 @@
 
 namespace JustBetter\DynamicsClient;
 
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use JustBetter\DynamicsClient\Client\ClientFactory;
 use JustBetter\DynamicsClient\Commands\TestConnection;
-use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 
 class ServiceProvider extends BaseServiceProvider

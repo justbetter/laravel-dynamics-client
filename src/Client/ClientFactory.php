@@ -2,9 +2,9 @@
 
 namespace JustBetter\DynamicsClient\Client;
 
-use SaintSystems\OData\ODataClient;
-use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
+use JustBetter\DynamicsClient\Exceptions\DynamicsException;
+use SaintSystems\OData\ODataClient;
 
 /** @phpstan-consistent-constructor */
 class ClientFactory implements ClientFactoryContract
