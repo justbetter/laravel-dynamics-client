@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.5.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.6.0...main)
+## [1.6.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.6.0) - 2024-03-29
+
+### What's Changed
+* Support Laravel 11 by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/22
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.5.0...1.6.0
+
 ## [1.5.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.5.0) - 2023-11-23
 
 ### What's Changed
@@ -18,6 +26,14 @@
 
 
 **Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.3.0...1.4.0
+
+## [1.3.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.3.0) - 2023-09-27
+
+### What's Changed
+* Added the count method by @ramonrietdijk in https://github.com/justbetter/laravel-dynamics-client/pull/17
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.2.2...1.3.0
 
 ## [1.2.2](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.2.2) - 2023-07-31
 
