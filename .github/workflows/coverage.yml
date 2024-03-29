@@ -1,4 +1,4 @@
-name: tests
+name: coverage
 
 on: ['push', 'pull_request']
 
@@ -9,17 +9,14 @@ jobs:
             fail-fast: true
             matrix:
                 os: [ubuntu-latest]
-                php: [8.1, 8.2, 8.3]
+                php: [8.3]
                 laravel: [10.*, 11.*]
-                stability: [prefer-lowest, prefer-stable]
+                stability: [prefer-stable]
                 include:
                     - laravel: 10.*
                       testbench: 8.*
                     - laravel: 11.*
                       testbench: 9.*
-                exclude:
-                    - laravel: 11.*
-                      php: 8.1
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -31,12 +28,13 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
-                  extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-                  coverage: none
+                  extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, xdebug
+                  coverage: xdebug
 
             - name: Install dependencies
               run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                  composer config allow-plugins.pestphp/pest-plugin true
+                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" pestphp/pest --no-interaction --no-update
                   composer update --${{ matrix.stability }} --prefer-dist --no-interaction
             - name: Execute tests
-              run: composer test
+              run: XDEBUG_MODE=coverage php vendor/bin/pest --coverage --min=100

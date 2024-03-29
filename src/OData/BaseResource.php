@@ -26,19 +26,19 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public string $endpoint;
 
-    final public function __construct(string $connection = null, string $endpoint = null)
+    final public function __construct(?string $connection = null, ?string $endpoint = null)
     {
         $this->connection ??= $connection ?? config('dynamics.connection');
         $this->endpoint ??= $endpoint ?? config('dynamics.resources.'.static::class,
             Str::afterLast(static::class, '\\'));
     }
 
-    public static function new(string $connection = null, string $endpoint = null): static
+    public static function new(?string $connection = null, ?string $endpoint = null): static
     {
         return new static($connection, $endpoint);
     }
 
-    public static function query(string $connection = null, string $endpoint = null): QueryBuilder
+    public static function query(?string $connection = null, ?string $endpoint = null): QueryBuilder
     {
         return static::new($connection, $endpoint)->newQuery();
     }
@@ -128,7 +128,7 @@ abstract class BaseResource implements Arrayable, ArrayAccess
             : $this->data['odata.etag'];
     }
 
-    public function client(string $etag = null): ODataClient
+    public function client(?string $etag = null): ODataClient
     {
         /** @var ClientFactoryContract $factory */
         $factory = app(ClientFactoryContract::class, ['connection' => $this->connection]);
