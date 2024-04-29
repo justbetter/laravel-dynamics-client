@@ -4,7 +4,6 @@ namespace JustBetter\DynamicsClient\OData;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use JustBetter\DynamicsClient\Concerns\CanBeSerialized;
 use JustBetter\DynamicsClient\Concerns\HasCasts;

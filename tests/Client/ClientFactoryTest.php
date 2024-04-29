@@ -2,7 +2,6 @@
 
 namespace JustBetter\DynamicsClient\Tests\Client;
 
-use Illuminate\Console\View\Components\Warn;
 use JustBetter\DynamicsClient\Actions\ResolveTokenData;
 use JustBetter\DynamicsClient\Client\ClientFactory;
 use JustBetter\DynamicsClient\Data\TokenData;
@@ -33,15 +32,15 @@ class ClientFactoryTest extends TestCase
             'grant_type' => 'client_credentials',
         ]);
 
-        $this->mock(ResolveTokenData::class, function(MockInterface $mock): void {
-           $mock->shouldReceive('resolve')->andReturn(
-               TokenData::of([
-                   'token_type' => '::type::',
-                   'expires_in' => 60,
-                   'ext_expires_in' => 60,
-                   'access_token' => '::access-token::',
-               ])
-           ) ;
+        $this->mock(ResolveTokenData::class, function (MockInterface $mock): void {
+            $mock->shouldReceive('resolve')->andReturn(
+                TokenData::of([
+                    'token_type' => '::type::',
+                    'expires_in' => 60,
+                    'ext_expires_in' => 60,
+                    'access_token' => '::access-token::',
+                ])
+            );
         });
 
         $factory = ClientFactory::make('default');
