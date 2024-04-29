@@ -14,7 +14,7 @@ class ResolveTokenDataTest extends TestCase
         parent::setUp();
 
         Http::fake([
-            'azure_redirect_uri' => Http::response([
+            'dynamics_redirect_uri' => Http::response([
                 'token_type' => '::token-type::',
                 'expires_in' => 3600,
                 'ext_expires_in' => 3600,
@@ -32,7 +32,7 @@ class ResolveTokenDataTest extends TestCase
         $token = $resolver->resolve([
             'client_id' => 'client_id',
             'client_secret' => 'client_secret',
-            'redirect_uri' => 'azure_redirect_uri',
+            'redirect_uri' => 'dynamics_redirect_uri',
             'scope' => 'scope',
             'grant_type' => 'client_credentials',
         ]);
@@ -61,7 +61,7 @@ class ResolveTokenDataTest extends TestCase
         $token = $resolver->resolve([
             'client_id' => 'client_id',
             'client_secret' => 'client_secret',
-            'redirect_uri' => 'azure_redirect_uri',
+            'redirect_uri' => 'dynamics_redirect_uri',
             'scope' => 'scope',
             'grant_type' => 'client_credentials',
         ]);
