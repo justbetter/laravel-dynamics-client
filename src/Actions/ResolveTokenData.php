@@ -7,9 +7,9 @@ use JustBetter\DynamicsClient\Data\TokenData;
 
 class ResolveTokenData
 {
-    public function resolve(array $config): TokenData
+    public function resolve(string $connection, array $config): TokenData
     {
-        $cacheKey = 'dynamics-client:token';
+        $cacheKey = 'dynamics-client:token:' . $connection;
 
         if ($tokenData = cache()->get($cacheKey)) {
             return TokenData::of(decrypt($tokenData));

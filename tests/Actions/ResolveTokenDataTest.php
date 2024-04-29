@@ -29,7 +29,7 @@ class ResolveTokenDataTest extends TestCase
         /** @var ResolveTokenData $resolver */
         $resolver = app(ResolveTokenData::class);
 
-        $token = $resolver->resolve([
+        $token = $resolver->resolve('default', [
             'client_id' => 'client_id',
             'client_secret' => 'client_secret',
             'redirect_uri' => 'dynamics_redirect_uri',
@@ -53,12 +53,12 @@ class ResolveTokenDataTest extends TestCase
             'access_token' => '::cached-token::',
         ];
 
-        cache()->rememberForever('dynamics-client:token', fn (): string => encrypt($fakeTokenData));
+        cache()->rememberForever('dynamics-client:token:default', fn (): string => encrypt($fakeTokenData));
 
         /** @var ResolveTokenData $resolver */
         $resolver = app(ResolveTokenData::class);
 
-        $token = $resolver->resolve([
+        $token = $resolver->resolve('default', [
             'client_id' => 'client_id',
             'client_secret' => 'client_secret',
             'redirect_uri' => 'dynamics_redirect_uri',

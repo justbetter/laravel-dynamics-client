@@ -30,7 +30,7 @@ class ClientFactory implements ClientFactoryContract
             ->url($config['base_url'], $config['version'], "Company('{$config['company']}')")
             ->when(
                 $config['auth'] === 'oauth',
-                fn (ClientFactory $factory): ClientFactory => $factory->oauth($config)
+                fn (ClientFactory $factory): ClientFactory => $factory->oauth($connection, $config)
             )
             ->when(
                 $config['auth'] !== 'oauth',
@@ -103,12 +103,12 @@ class ClientFactory implements ClientFactoryContract
         return $this;
     }
 
-    public function oauth(array $config): static
+    public function oauth(string $connection, array $config): static
     {
         /** @var ResolveTokenData $token */
         $token = app(ResolveTokenData::class);
 
-        $tokenData = $token->resolve($config['oauth']);
+        $tokenData = $token->resolve($connection, $config['oauth']);
 
         $this->header('Authorization', $tokenData->tokenType().' '.$tokenData->accessToken());
 
