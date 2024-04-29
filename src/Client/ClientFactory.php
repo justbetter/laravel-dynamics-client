@@ -30,11 +30,11 @@ class ClientFactory implements ClientFactoryContract
             ->url($config['base_url'], $config['version'], "Company('{$config['company']}')")
             ->when(
                 $config['auth'] === 'oauth',
-                fn (ClientFactory $factory): static => $factory->oauth($config)
+                fn (ClientFactory $factory): ClientFactory => $factory->oauth($config)
             )
             ->when(
                 $config['auth'] !== 'oauth',
-                fn (ClientFactory $factory): static => $factory->auth($config['username'], $config['password'], $config['auth'])
+                fn (ClientFactory $factory): ClientFactory => $factory->auth($config['username'], $config['password'], $config['auth'])
             )
             ->header('Accept', 'application/json')
             ->header('Content-Type', 'application/json');
@@ -123,7 +123,7 @@ class ClientFactory implements ClientFactoryContract
         return new ODataClient($this->url, null, $httpProvider);
     }
 
-    public function when(bool $condition, Closure $callback): static
+    public function when(bool $condition, Closure $callback): ClientFactory
     {
         if ($condition) {
             $callback($this);
