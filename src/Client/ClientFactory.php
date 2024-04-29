@@ -2,6 +2,8 @@
 
 namespace JustBetter\DynamicsClient\Client;
 
+use Closure;
+use JustBetter\DynamicsClient\Actions\ResolveTokenData;
 use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use SaintSystems\OData\ODataClient;
@@ -26,7 +28,14 @@ class ClientFactory implements ClientFactoryContract
         $this
             ->options($config['options'])
             ->url($config['base_url'], $config['version'], "Company('{$config['company']}')")
-            ->auth($config['username'], $config['password'], $config['auth'])
+            ->when(
+                $config['auth'] === 'oauth',
+                fn (ClientFactory $factory): ClientFactory => $factory->oauth($connection, $config)
+            )
+            ->when(
+                $config['auth'] !== 'oauth',
+                fn (ClientFactory $factory): ClientFactory => $factory->auth($config['username'], $config['password'], $config['auth'])
+            )
             ->header('Accept', 'application/json')
             ->header('Content-Type', 'application/json');
     }
@@ -94,11 +103,32 @@ class ClientFactory implements ClientFactoryContract
         return $this;
     }
 
+    public function oauth(string $connection, array $config): static
+    {
+        /** @var ResolveTokenData $token */
+        $token = app(ResolveTokenData::class);
+
+        $tokenData = $token->resolve($connection, $config['oauth']);
+
+        $this->header('Authorization', $tokenData->tokenType().' '.$tokenData->accessToken());
+
+        return $this;
+    }
+
     public function fabricate(): ODataClient
     {
         $httpProvider = new ClientHttpProvider();
         $httpProvider->setExtraOptions($this->options);
 
         return new ODataClient($this->url, null, $httpProvider);
+    }
+
+    public function when(bool $condition, Closure $callback): ClientFactory
+    {
+        if ($condition) {
+            $callback($this);
+        }
+
+        return $this;
     }
 }

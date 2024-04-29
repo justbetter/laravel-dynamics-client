@@ -4,6 +4,7 @@ namespace JustBetter\DynamicsClient\OData;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use JustBetter\DynamicsClient\Concerns\CanBeSerialized;
 use JustBetter\DynamicsClient\Concerns\HasCasts;
@@ -158,6 +159,7 @@ abstract class BaseResource implements Arrayable, ArrayAccess
             config()->set('dynamics.connections.'.$connection.'.company', $data['company'] ?? $connection);
             config()->set('dynamics.connections.'.$connection.'.username', 'username');
             config()->set('dynamics.connections.'.$connection.'.password', 'password');
+            config()->set('dynamics.connections.'.$connection.'.auth', 'basic');
         }
     }
 }

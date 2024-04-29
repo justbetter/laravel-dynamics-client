@@ -21,6 +21,13 @@ return [
             'username' => env('DYNAMICS_USERNAME'),
             'password' => env('DYNAMICS_PASSWORD'),
             'auth' => env('DYNAMICS_AUTH', 'ntlm'),
+            'oauth' => [
+                'client_id' => env('DYNAMICS_OAUTH_CLIENT_ID'),
+                'client_secret' => env('DYNAMICS_OAUTH_CLIENT_SECRET'),
+                'redirect_uri' => env('DYNAMICS_OAUTH_REDIRECT_URI'),
+                'scope' => env('DYNAMICS_OAUTH_SCOPE'),
+                'grant_type' => env('DYNAMICS_OAUTH_GRANT_TYPE', 'client_credentials'),
+            ],
             'page_size' => env('DYNAMICS_PAGE_SIZE', 1000),
             'options' => [
                 'connect_timeout' => 5,
