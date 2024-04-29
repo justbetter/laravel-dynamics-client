@@ -66,17 +66,27 @@ Dynamics. This is crucial for the functionalities of the `lazy` method of the `Q
 
 > **Note:** Be sure that Dynamics has been properly configured for OData.
 
-This package uses NTLM authentication by default. If you are required to use basic auth you can change this in
+This package uses NTLM authentication by default. If you are required to use basic auth or OAuth you can change this in
 your `.env`.
 
 ```
 DYNAMICS_AUTH=basic
 ```
 
-| Type       | Authentication Type  |
-|------------|----------------------|
-| On-Premise | NTLM authentication  |
-| 365        | Basic authentication |
+#### OAuth
+
+To setup OAuth add the following to your `.env`
+
+```dotenv
+DYNAMICS_AUTH=oauth
+DYNAMICS_OAUTH_CLIENT_ID=
+DYNAMICS_OAUTH_CLIENT_SECRET=
+DYNAMICS_OAUTH_REDIRECT_URI=
+DYNAMICS_OAUTH_SCOPE=
+```
+
+When using D365 cloud with [Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow) your redirect uri will be: `https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token`
+and your base url should be `https://api.businesscentral.dynamics.com/v2.0/<tenant>/<environment>`.
 
 ### Connections
 
