@@ -2,6 +2,4 @@
 
 namespace JustBetter\DynamicsClient\Exceptions;
 
-class ModifiedException extends DynamicsException
-{
-}
+class ModifiedException extends DynamicsException {}
