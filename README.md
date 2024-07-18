@@ -109,7 +109,7 @@ If you wish to use the company's UUID you can simply add an `uuid` field:
             'base_url' => env('DYNAMICS_BASE_URL'),
             'version' => env('DYNAMICS_VERSION', 'ODataV4'),
             'company' => 'Company Name',
-            'uuid' => 'Company UUID', // Client will use this if it exists
+            'uuid' => 'Company UUID', // The UUID will be prioritized over the company name
 ```
 
 ## Adding web services
