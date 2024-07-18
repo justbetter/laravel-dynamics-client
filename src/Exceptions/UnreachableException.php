@@ -2,4 +2,6 @@
 
 namespace JustBetter\DynamicsClient\Exceptions;
 
-class UnreachableException extends DynamicsException {}
+class UnreachableException extends DynamicsException
+{
+}
