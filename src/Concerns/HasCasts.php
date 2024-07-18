@@ -14,7 +14,7 @@ trait HasCasts
     public function cast(string $key, mixed $value): string
     {
         return match ($this->getCastType($key)) {
-            'int', 'date', 'decimal' => (string) $value,
+            'int', 'date', 'decimal', 'guid' => (string) $value,
             default => '\''.$value.'\'',
         };
     }

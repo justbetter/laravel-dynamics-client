@@ -39,7 +39,9 @@ class ClientHttpProvider extends GuzzleHttpProvider
             /** @var DynamicsException $dynamicsException */
             $dynamicsException = new $mapping($message, $code, $exception);
 
-            throw $dynamicsException->setRequest($request);
+            throw $dynamicsException
+                ->setRequest($request)
+                ->setResponse($exception->response);
         }
     }
 }

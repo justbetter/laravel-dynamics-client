@@ -88,6 +88,7 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public function update(array $data, bool $force = false): ?static
     {
+
         $this
             ->client($this->etag($force))
             ->patch($this->getResourceUrl(), $data);

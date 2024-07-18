@@ -2,4 +2,6 @@
 
 namespace JustBetter\DynamicsClient\Exceptions;
 
-class NotFoundException extends DynamicsException {}
+class NotFoundException extends DynamicsException
+{
+}
