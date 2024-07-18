@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.1...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.2...main)
+## [1.7.2](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.2) - 2024-07-18
+
+### What's Changed
+* Support GUID by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/25
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.7.1...1.7.2
+
 ## [1.7.1](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.1) - 2024-07-18
 
 ### What's Changed
