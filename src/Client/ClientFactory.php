@@ -27,7 +27,7 @@ class ClientFactory implements ClientFactoryContract
 
         $this
             ->options($config['options'])
-            ->url($config['base_url'], $config['version'], "Company('{$config['company']}')")
+            ->url($config['base_url'], $config['version'], "Company('" . ($config['uuid'] ?? $config['company']) . "')")
             ->when(
                 $config['auth'] === 'oauth',
                 fn (ClientFactory $factory): ClientFactory => $factory->oauth($connection, $config)

@@ -101,6 +101,17 @@ Customer::query()->first();
 Customer::query('other_connection')->first();
 ```
 
+By default, the client will use the `company` field to select the Dynamics company.
+If you wish to use the company's UUID you can simply add an `uuid` field:
+
+```php
+        'Company' => [
+            'base_url' => env('DYNAMICS_BASE_URL'),
+            'version' => env('DYNAMICS_VERSION', 'ODataV4'),
+            'company' => 'Company Name',
+            'uuid' => 'Company UUID', // The UUID will be prioritized over the company name
+```
+
 ## Adding web services
 
 Adding a web service to your configuration is easily done. Start by creating your own resource class to map te data to.
