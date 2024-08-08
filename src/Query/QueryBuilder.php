@@ -97,7 +97,7 @@ class QueryBuilder
         $resource = $this->first();
 
         if ($resource === null) {
-            throw new NotFoundException();
+            throw new NotFoundException;
         }
 
         return $resource;
@@ -132,7 +132,7 @@ class QueryBuilder
         $resource = $this->find(...$values);
 
         if ($resource === null) {
-            throw new NotFoundException();
+            throw new NotFoundException;
         }
 
         return $resource;
@@ -145,6 +145,20 @@ class QueryBuilder
 
         if ($resource !== null) {
             return $resource;
+        }
+
+        $data = array_merge($attributes, $values);
+
+        return $this->newResourceInstance()->create($data);
+    }
+
+    public function updateOrCreate(array $attributes = [], array $values = [], bool $force = false): BaseResource
+    {
+        /** @var ?BaseResource $resource */
+        $resource = $this->where($attributes)->first();
+
+        if ($resource !== null) {
+            return $resource->update($values, $force);
         }
 
         $data = array_merge($attributes, $values);

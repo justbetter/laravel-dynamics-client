@@ -5,6 +5,7 @@ namespace JustBetter\DynamicsClient\Tests\OData;
 use JustBetter\DynamicsClient\OData\Pages\Customer;
 use JustBetter\DynamicsClient\Tests\Fakes\OData\FakeResource;
 use JustBetter\DynamicsClient\Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class BaseResourceTest extends TestCase
 {
@@ -45,23 +46,23 @@ class BaseResourceTest extends TestCase
         config()->set('dynamics.connection', '::default::');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_get_the_default_connection(): void
     {
-        $page = new Customer();
+        $page = new Customer;
 
         $this->assertEquals('::default::', $page->connection);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_get_the_default_endpoint(): void
     {
-        $page = new Customer();
+        $page = new Customer;
 
         $this->assertEquals('::customer-endpoint::', $page->endpoint);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_the_connection(): void
     {
         $page = new Customer('::other-connection::');
@@ -73,7 +74,7 @@ class BaseResourceTest extends TestCase
         $this->assertEquals('::other-connection::', $page->connection);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_the_endpoint(): void
     {
         $page = new Customer(null, '::other-endpoint::');
@@ -85,7 +86,7 @@ class BaseResourceTest extends TestCase
         $this->assertEquals('::other-endpoint::', $page->endpoint);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_force_a_connection_and_endpoint(): void
     {
         $resource = FakeResource::new();
