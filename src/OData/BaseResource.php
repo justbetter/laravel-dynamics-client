@@ -26,6 +26,8 @@ abstract class BaseResource implements Arrayable, ArrayAccess
 
     public string $endpoint;
 
+    public bool $wasRecentlyCreated = false;
+
     final public function __construct(?string $connection = null, ?string $endpoint = null)
     {
         $this->connection ??= $connection ?? config('dynamics.connection');
@@ -83,12 +85,18 @@ abstract class BaseResource implements Arrayable, ArrayAccess
         /** @var Entity $entity */
         $entity = reset($entities);
 
-        return static::new($this->connection, $this->endpoint)->fromEntity($entity);
+        return static::new($this->connection, $this->endpoint)->fromEntity($entity)->wasRecentlyCreated();
     }
 
-    public function update(array $data, bool $force = false): ?static
+    protected function wasRecentlyCreated(bool $wasRecentlyCreated = true): static
     {
+        $this->wasRecentlyCreated = $wasRecentlyCreated;
 
+        return $this;
+    }
+
+    public function update(array $data, bool $force = false): static
+    {
         $this
             ->client($this->etag($force))
             ->patch($this->getResourceUrl(), $data);
