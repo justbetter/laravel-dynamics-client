@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.2...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.3...main)
+## [1.7.3](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.3) - 2024-08-08
+
+### What's Changed
+* Added the updateOrCreate method by @ramonrietdijk in https://github.com/justbetter/laravel-dynamics-client/pull/26
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.7.2...1.7.3
+
 ## [1.7.2](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.2) - 2024-07-18
 
 ### What's Changed
