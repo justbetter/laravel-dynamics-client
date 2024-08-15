@@ -112,10 +112,12 @@ class QueryBuilder
         foreach ($combined as $key => $value) {
             if ($baseResource->getCastType($key) === 'date') {
                 $this->builder->whereDate($key, '=', $value);
-            } elseif ($baseResource->getCastType($key) === 'guid') {
-                $this->builder->whereRaw("$key eq $value");
             } else {
-                $this->builder->where($key, '=', $value);
+                if ($baseResource->getCastType($key) === 'guid') {
+                    $this->builder->whereRaw("$key eq $value");
+                } else {
+                    $this->builder->where($key, '=', $value);
+                }
             }
         }
 
@@ -217,6 +219,17 @@ class QueryBuilder
                 $method = $index === 0 ? 'where' : 'orWhere';
 
                 $builder->$method($field, '=', $value);
+            }
+        });
+
+        return $this;
+    }
+
+    public function whereNotIn(string $field, array $values): static
+    {
+        $this->builder->where(function (Builder $builder) use ($field, $values): void {
+            foreach ($values as $value) {
+                $builder->where($field, '!=', $value);
             }
         });
 
