@@ -223,6 +223,17 @@ class QueryBuilder
         return $this;
     }
 
+    public function whereNotIn(string $field, array $values): static
+    {
+        $this->builder->where(function (Builder $builder) use ($field, $values): void {
+            foreach ($values as $value) {
+                $builder->where($field, '!=', $value);
+            }
+        });
+
+        return $this;
+    }
+
     public function when(mixed $statement, Closure $closure): static
     {
         if ($statement) {
