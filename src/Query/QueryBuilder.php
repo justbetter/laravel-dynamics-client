@@ -112,12 +112,10 @@ class QueryBuilder
         foreach ($combined as $key => $value) {
             if ($baseResource->getCastType($key) === 'date') {
                 $this->builder->whereDate($key, '=', $value);
+            } elseif ($baseResource->getCastType($key) === 'guid') {
+                $this->builder->whereRaw("$key eq $value");
             } else {
-                if ($baseResource->getCastType($key) === 'guid') {
-                    $this->builder->whereRaw("$key eq $value");
-                } else {
-                    $this->builder->where($key, '=', $value);
-                }
+                $this->builder->where($key, '=', $value);
             }
         }
 
