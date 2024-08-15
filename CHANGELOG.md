@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.3...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.4...main)
+## [1.7.4](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.4) - 2024-08-15
+
+### What's Changed
+* Add whereNotIn method by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/27
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.7.3...1.7.4
+
 ## [1.7.3](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.3) - 2024-08-08
 
 ### What's Changed
