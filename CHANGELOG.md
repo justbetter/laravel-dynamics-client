@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.7.4...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.8.0...main)
+## [1.8.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.8.0) - 2024-11-12
+
+### What's Changed
+* Add availability by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/28
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.7.4...1.8.0
+
 ## [1.7.4](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.7.4) - 2024-08-15
 
 ### What's Changed
