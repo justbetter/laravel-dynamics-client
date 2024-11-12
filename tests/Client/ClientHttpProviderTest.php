@@ -15,8 +15,8 @@ class ClientHttpProviderTest extends TestCase
     #[Test]
     public function it_throws_when_unavailable(): void
     {
-        $this->mock(ChecksAvailability::class, function(MockInterface $mock): void {
-           $mock->shouldReceive('check')->with('default')->andReturnFalse();
+        $this->mock(ChecksAvailability::class, function (MockInterface $mock): void {
+            $mock->shouldReceive('check')->with('default')->andReturnFalse();
         });
 
         config()->set('dynamics.connections.default.availability.throw', true);

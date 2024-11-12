@@ -12,6 +12,5 @@ class DynamicsResponseEvent
     public function __construct(
         public Response $response,
         public string $connection,
-    ) {
-    }
+    ) {}
 }

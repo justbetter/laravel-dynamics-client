@@ -12,7 +12,6 @@ use JustBetter\DynamicsClient\Concerns\HasKeys;
 use JustBetter\DynamicsClient\Contracts\Availability\ChecksAvailability;
 use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 use JustBetter\DynamicsClient\Exceptions\DynamicsException;
-use JustBetter\DynamicsClient\Exceptions\UnreachableException;
 use JustBetter\DynamicsClient\Query\QueryBuilder;
 use SaintSystems\OData\Entity;
 use SaintSystems\OData\ODataClient;

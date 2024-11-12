@@ -7,9 +7,7 @@ use JustBetter\DynamicsClient\Events\DynamicsTimeoutEvent;
 
 class TimeoutAvailabilityListener
 {
-    public function __construct(protected RegistersUnavailability $unavailability)
-    {
-    }
+    public function __construct(protected RegistersUnavailability $unavailability) {}
 
     public function handle(DynamicsTimeoutEvent $event): void
     {

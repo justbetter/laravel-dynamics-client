@@ -7,9 +7,7 @@ use JustBetter\DynamicsClient\Events\DynamicsResponseEvent;
 
 class ResponseAvailabilityListener
 {
-    public function __construct(protected RegistersUnavailability $unavailability)
-    {
-    }
+    public function __construct(protected RegistersUnavailability $unavailability) {}
 
     public function handle(DynamicsResponseEvent $event): void
     {

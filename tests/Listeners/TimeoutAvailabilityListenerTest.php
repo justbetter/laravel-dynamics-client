@@ -14,7 +14,7 @@ class TimeoutAvailabilityListenerTest extends TestCase
     #[Test]
     public function it_calls_action(): void
     {
-        $this->mock(RegistersUnavailability::class, function(MockInterface $mock): void {
+        $this->mock(RegistersUnavailability::class, function (MockInterface $mock): void {
             $mock->shouldReceive('register')->with('::connection::')->once();
         });
 

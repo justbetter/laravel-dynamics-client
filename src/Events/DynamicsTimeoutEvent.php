@@ -10,6 +10,5 @@ class DynamicsTimeoutEvent
 
     public function __construct(
         public string $connection,
-    ) {
-    }
+    ) {}
 }

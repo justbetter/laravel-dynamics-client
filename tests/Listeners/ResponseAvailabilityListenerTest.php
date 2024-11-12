@@ -17,14 +17,13 @@ class ResponseAvailabilityListenerTest extends TestCase
     {
         Item::fake();
 
-        $this->mock(RegistersUnavailability::class, function(MockInterface $mock): void {
+        $this->mock(RegistersUnavailability::class, function (MockInterface $mock): void {
             $mock->shouldNotReceive('register');
         });
 
         Http::fake([
             '*' => Http::response(null, 200),
         ])->preventStrayRequests();
-
 
         Item::query('default')->get();
     }
@@ -33,7 +32,7 @@ class ResponseAvailabilityListenerTest extends TestCase
     public function it_calls_action(): void
     {
         Item::fake();
-        $this->mock(RegistersUnavailability::class, function(MockInterface $mock): void {
+        $this->mock(RegistersUnavailability::class, function (MockInterface $mock): void {
             $mock->shouldReceive('register')->with('default')->once();
         });
 
