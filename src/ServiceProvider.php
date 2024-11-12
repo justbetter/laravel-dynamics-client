@@ -2,10 +2,16 @@
 
 namespace JustBetter\DynamicsClient;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use JustBetter\DynamicsClient\Actions\Availability\CheckAvailability;
+use JustBetter\DynamicsClient\Actions\Availability\RegisterUnavailability;
 use JustBetter\DynamicsClient\Client\ClientFactory;
 use JustBetter\DynamicsClient\Commands\TestConnection;
-use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
+use JustBetter\DynamicsClient\Events\DynamicsResponseEvent;
+use JustBetter\DynamicsClient\Events\DynamicsTimeoutEvent;
+use JustBetter\DynamicsClient\Listeners\ResponseAvailabilityListener;
+use JustBetter\DynamicsClient\Listeners\TimeoutAvailabilityListener;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -13,7 +19,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this
             ->registerConfig()
-            ->bindResolvers();
+            ->registerActions();
     }
 
     protected function registerConfig(): static
@@ -23,9 +29,11 @@ class ServiceProvider extends BaseServiceProvider
         return $this;
     }
 
-    protected function bindResolvers(): static
+    protected function registerActions(): static
     {
-        $this->app->bind(ClientFactoryContract::class, ClientFactory::class);
+        ClientFactory::bind();
+        CheckAvailability::bind();
+        RegisterUnavailability::bind();
 
         return $this;
     }
@@ -34,7 +42,8 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this
             ->bootConfig()
-            ->bootCommands();
+            ->bootCommands()
+            ->bootListeners();
     }
 
     protected function bootConfig(): static
@@ -53,6 +62,14 @@ class ServiceProvider extends BaseServiceProvider
                 TestConnection::class,
             ]);
         }
+
+        return $this;
+    }
+
+    protected function bootListeners(): static
+    {
+        Event::listen(DynamicsTimeoutEvent::class, TimeoutAvailabilityListener::class);
+        Event::listen(DynamicsResponseEvent::class, ResponseAvailabilityListener::class);
 
         return $this;
     }

@@ -117,7 +117,7 @@ class ClientFactory implements ClientFactoryContract
 
     public function fabricate(): ODataClient
     {
-        $httpProvider = new ClientHttpProvider;
+        $httpProvider = new ClientHttpProvider($this->connection);
         $httpProvider->setExtraOptions($this->options);
 
         return new ODataClient($this->url, null, $httpProvider);
@@ -130,5 +130,10 @@ class ClientFactory implements ClientFactoryContract
         }
 
         return $this;
+    }
+
+    public static function bind(): void
+    {
+        app()->bind(ClientFactoryContract::class, static::class);
     }
 }

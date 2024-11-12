@@ -9,6 +9,7 @@ use JustBetter\DynamicsClient\Concerns\CanBeSerialized;
 use JustBetter\DynamicsClient\Concerns\HasCasts;
 use JustBetter\DynamicsClient\Concerns\HasData;
 use JustBetter\DynamicsClient\Concerns\HasKeys;
+use JustBetter\DynamicsClient\Contracts\Availability\ChecksAvailability;
 use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
 use JustBetter\DynamicsClient\Exceptions\DynamicsException;
 use JustBetter\DynamicsClient\Query\QueryBuilder;
@@ -157,6 +158,14 @@ abstract class BaseResource implements Arrayable, ArrayAccess
     public function relation(string $relation, string $class): QueryBuilder
     {
         return new QueryBuilder($this->client(), $this->connection, $this->getResourceUrl().'/'.$relation, $class);
+    }
+
+    public function available(): bool
+    {
+        /** @var ChecksAvailability $instance */
+        $instance = app(ChecksAvailability::class);
+
+        return $instance->check($this->connection);
     }
 
     public static function fake(): void

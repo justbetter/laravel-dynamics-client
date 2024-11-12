@@ -347,6 +347,10 @@ Http::fake([
 $item = Item::query()->first();
 ```
 
+## Availability
+
+This client can prevent requests from going to Dynamics when it is giving HTTP status codes 503, 504 or timeouts. This can be configured per connection in the `availability` settings. Enable the `throw` option to prevent any requests from going to Dynamics.
+
 ## Contributing
 
 Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
