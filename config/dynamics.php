@@ -32,6 +32,22 @@ return [
             'options' => [
                 'connect_timeout' => 5,
             ],
+            'availability' => [
+                /* The response codes that should trigger the availability check in addition to connection timeouts */
+                'codes' => [502, 503, 504],
+
+                /* The amount of failed requests before the service is marked as unavailable. */
+                'threshold' => 10,
+
+                /* The timespan in minutes in which the failed requests should occur. */
+                'timespan' => 10,
+
+                /* The cooldown in minutes after the threshold is reached. */
+                'cooldown' => 2,
+
+                /* Throw an exception that prevents calls to Dynamics when unavailable */
+                'throw' => false,
+            ],
         ],
     ],
 
