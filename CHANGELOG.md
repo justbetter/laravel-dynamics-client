@@ -1,6 +1,16 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.8.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.8.1...main)
+## [1.8.1](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.8.1) - 2025-01-24
+
+### What's Changed
+* render 404 so it wont appear in logs by @fritsjustbetter in https://github.com/justbetter/laravel-dynamics-client/pull/31
+
+### New Contributors
+* @fritsjustbetter made their first contribution in https://github.com/justbetter/laravel-dynamics-client/pull/31
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.8.0...1.8.1
+
 ## [1.8.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.8.0) - 2024-11-12
 
 ### What's Changed
