@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.8.1...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.8.2...main)
+## [1.8.2](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.8.2) - 2025-02-12
+
+### What's Changed
+* Support timeout by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/32
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.8.1...1.8.2
+
 ## [1.8.1](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.8.1) - 2025-01-24
 
 ### What's Changed
