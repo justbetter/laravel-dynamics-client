@@ -30,7 +30,7 @@ return [
             ],
             'page_size' => env('DYNAMICS_PAGE_SIZE', 1000),
             'options' => [
-                'connect_timeout' => 5,
+                'connect_timeout' => env('DYNAMICS_TIMEOUT', 30),
             ],
             'availability' => [
                 /* The response codes that should trigger the availability check in addition to connection timeouts */
