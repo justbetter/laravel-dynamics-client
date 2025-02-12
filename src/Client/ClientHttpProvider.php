@@ -31,6 +31,8 @@ class ClientHttpProvider extends GuzzleHttpProvider
             throw new UnavailableException('The Dynamics connection "'.$this->connection.'" is currently unavailable.');
         }
 
+        $timeout = config('dynamics.connections.'.$this->connection.'.options.connect_timeout', 30);
+
         try {
             $options = $this->extra_options;
 
@@ -38,7 +40,10 @@ class ClientHttpProvider extends GuzzleHttpProvider
                 $options['body'] = $request->body;
             }
 
-            $response = Http::send($request->method, $request->requestUri, $options);
+            $response = Http::connectTimeout($timeout)
+                ->timeout($timeout)
+                ->send($request->method, $request->requestUri, $options);
+
             DynamicsResponseEvent::dispatch($response, $this->connection);
 
             $response->throw();
