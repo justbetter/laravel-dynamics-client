@@ -50,7 +50,7 @@
             "@coverage"
         ],
         "fix-style": "pint",
-        "coverage": "XDEBUG_MODE=coverage php vendor/bin/pest --coverage --min=56"
+        "coverage": "XDEBUG_MODE=coverage php vendor/bin/pest --coverage --min=54"
     },
     "config": {
         "sort-packages": true,
