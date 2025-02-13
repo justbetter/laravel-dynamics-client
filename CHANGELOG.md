@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.8.2...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.9.0...main)
+## [1.9.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.9.0) - 2025-02-13
+
+### What's Changed
+* Laravel 12 support by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/33
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.8.2...1.9.0
+
 ## [1.8.2](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.8.2) - 2025-02-12
 
 ### What's Changed
