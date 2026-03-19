@@ -1,6 +1,17 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.9.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.10.0...main)
+## [1.10.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.10.0) - 2026-03-19
+
+### What's Changed
+* Adjust workflows by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/36
+* Add Laravel 13 support by @danny-de-wit in https://github.com/justbetter/laravel-dynamics-client/pull/43
+
+### New Contributors
+* @danny-de-wit made their first contribution in https://github.com/justbetter/laravel-dynamics-client/pull/43
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.9.0...1.10.0
+
 ## [1.9.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.9.0) - 2025-02-13
 
 ### What's Changed
