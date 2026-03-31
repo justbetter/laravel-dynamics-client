@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Client;
 
 use JustBetter\DynamicsClient\Actions\ResolveTokenData;
@@ -11,7 +13,7 @@ use JustBetter\DynamicsClient\Tests\TestCase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 
-class ClientFactoryTest extends TestCase
+final class ClientFactoryTest extends TestCase
 {
     protected function setUp(): void
     {

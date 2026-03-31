@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Query;
 
 use Closure;
@@ -96,7 +98,7 @@ class QueryBuilder
     {
         $resource = $this->first();
 
-        if ($resource === null) {
+        if (! $resource instanceof BaseResource) {
             throw new NotFoundException;
         }
 
@@ -113,7 +115,7 @@ class QueryBuilder
             if ($baseResource->getCastType($key) === 'date') {
                 $this->builder->whereDate($key, '=', $value);
             } elseif ($baseResource->getCastType($key) === 'guid') {
-                $this->builder->whereRaw("$key eq $value");
+                $this->builder->whereRaw(sprintf('%s eq %s', $key, $value));
             } else {
                 $this->builder->where($key, '=', $value);
             }
@@ -131,7 +133,7 @@ class QueryBuilder
     {
         $resource = $this->find(...$values);
 
-        if ($resource === null) {
+        if (! $resource instanceof BaseResource) {
             throw new NotFoundException;
         }
 

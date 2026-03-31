@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Data;
 
 use Illuminate\Validation\ValidationException;
@@ -7,7 +9,7 @@ use JustBetter\DynamicsClient\Data\TokenData;
 use JustBetter\DynamicsClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class DataTest extends TestCase
+final class DataTest extends TestCase
 {
     #[Test]
     public function it_can_interact_with_data(): void
@@ -19,12 +21,12 @@ class DataTest extends TestCase
             'access_token' => '::access-token::',
         ]);
 
-        $this->assertTrue(isset($tokenData['access_token']));
+        $this->assertArrayHasKey('access_token', $tokenData);
         $this->assertEquals('::access-token::', $tokenData['access_token']);
 
         $tokenData['access_token'] = '::new-access-token::';
 
-        $this->assertEquals('::new-access-token::', $tokenData['access_token']);
+        $this->assertSame('::new-access-token::', $tokenData['access_token']);
 
         unset($tokenData['access_token']);
 

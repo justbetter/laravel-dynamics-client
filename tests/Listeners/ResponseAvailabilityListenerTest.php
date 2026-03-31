@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Listeners;
 
 use Illuminate\Support\Facades\Http;
@@ -10,7 +12,7 @@ use JustBetter\DynamicsClient\Tests\TestCase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 
-class ResponseAvailabilityListenerTest extends TestCase
+final class ResponseAvailabilityListenerTest extends TestCase
 {
     #[Test]
     public function it_does_not_trigger_on_ok_status(): void
