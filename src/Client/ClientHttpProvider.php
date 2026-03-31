@@ -45,7 +45,7 @@ class ClientHttpProvider extends GuzzleHttpProvider
 
             $response = Http::connectTimeout($timeout)
                 ->timeout($timeout)
-                ->send($request->method, $request->requestUri, $options);
+                ->send((string) $request->method, $request->requestUri, $options);
 
             DynamicsResponseEvent::dispatch($response, $this->connection);
 
