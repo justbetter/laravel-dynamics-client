@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Concerns;
 
 trait HasCasts
@@ -15,7 +17,7 @@ trait HasCasts
     {
         return match ($this->getCastType($key)) {
             'int', 'date', 'decimal', 'guid' => (string) $value,
-            default => '\''.$value.'\'',
+            default => "'".$value."'",
         };
     }
 }

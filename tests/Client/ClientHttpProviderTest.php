@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Client;
 
 use JustBetter\DynamicsClient\Client\ClientHttpProvider;
@@ -10,7 +12,7 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use SaintSystems\OData\HttpRequestMessage;
 
-class ClientHttpProviderTest extends TestCase
+final class ClientHttpProviderTest extends TestCase
 {
     #[Test]
     public function it_throws_when_unavailable(): void

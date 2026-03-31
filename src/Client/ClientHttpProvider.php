@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Client;
 
 use Illuminate\Http\Client\ConnectionException;
@@ -23,6 +25,7 @@ class ClientHttpProvider extends GuzzleHttpProvider
         parent::__construct();
     }
 
+    #[\Override]
     public function send(HttpRequestMessage $request): ResponseInterface
     {
         $throw = config('dynamics.connections.'.$this->connection.'.availability.throw', false);
@@ -42,7 +45,7 @@ class ClientHttpProvider extends GuzzleHttpProvider
 
             $response = Http::connectTimeout($timeout)
                 ->timeout($timeout)
-                ->send($request->method, $request->requestUri, $options);
+                ->send((string) $request->method, $request->requestUri, $options);
 
             DynamicsResponseEvent::dispatch($response, $this->connection);
 

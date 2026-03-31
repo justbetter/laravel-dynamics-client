@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\OData;
 
 use JustBetter\DynamicsClient\OData\Pages\Customer;
@@ -7,7 +9,7 @@ use JustBetter\DynamicsClient\Tests\Fakes\OData\FakeResource;
 use JustBetter\DynamicsClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class BaseResourceTest extends TestCase
+final class BaseResourceTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -51,7 +53,7 @@ class BaseResourceTest extends TestCase
     {
         $page = new Customer;
 
-        $this->assertEquals('::default::', $page->connection);
+        $this->assertSame('::default::', $page->connection);
     }
 
     #[Test]
@@ -59,7 +61,7 @@ class BaseResourceTest extends TestCase
     {
         $page = new Customer;
 
-        $this->assertEquals('::customer-endpoint::', $page->endpoint);
+        $this->assertSame('::customer-endpoint::', $page->endpoint);
     }
 
     #[Test]
@@ -67,11 +69,11 @@ class BaseResourceTest extends TestCase
     {
         $page = new Customer('::other-connection::');
 
-        $this->assertEquals('::other-connection::', $page->connection);
+        $this->assertSame('::other-connection::', $page->connection);
 
         $page = Customer::new('::other-connection::');
 
-        $this->assertEquals('::other-connection::', $page->connection);
+        $this->assertSame('::other-connection::', $page->connection);
     }
 
     #[Test]
@@ -79,11 +81,11 @@ class BaseResourceTest extends TestCase
     {
         $page = new Customer(null, '::other-endpoint::');
 
-        $this->assertEquals('::other-endpoint::', $page->endpoint);
+        $this->assertSame('::other-endpoint::', $page->endpoint);
 
         $page = Customer::new(null, '::other-endpoint::');
 
-        $this->assertEquals('::other-endpoint::', $page->endpoint);
+        $this->assertSame('::other-endpoint::', $page->endpoint);
     }
 
     #[Test]
@@ -91,7 +93,7 @@ class BaseResourceTest extends TestCase
     {
         $resource = FakeResource::new();
 
-        $this->assertEquals('::fake-connection::', $resource->connection);
-        $this->assertEquals('::fake-endpoint::', $resource->endpoint);
+        $this->assertSame('::fake-connection::', $resource->connection);
+        $this->assertSame('::fake-endpoint::', $resource->endpoint);
     }
 }

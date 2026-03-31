@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Actions;
 
 use Illuminate\Support\Facades\Http;
@@ -7,7 +9,7 @@ use JustBetter\DynamicsClient\Actions\ResolveTokenData;
 use JustBetter\DynamicsClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class ResolveTokenDataTest extends TestCase
+final class ResolveTokenDataTest extends TestCase
 {
     protected function setUp(): void
     {

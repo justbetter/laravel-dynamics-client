@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Actions;
 
 use Illuminate\Support\Facades\Http;
