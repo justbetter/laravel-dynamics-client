@@ -291,7 +291,15 @@ class Dynamics
     {
         $path = ltrim($path, '/');
 
-        return $path !== '' ? $path : $this->baseUrl();
+        if ($path !== '') {
+            return $path;
+        }
+
+        // An absolute base URL is passed through as-is, since Laravel only treats it as
+        // relative to the client's base URL - and thus prepends it again - when it isn't.
+        $baseUrl = $this->baseUrl();
+
+        return str_contains($baseUrl, '://') ? $baseUrl : '';
     }
 
     public function available(): bool
@@ -390,7 +398,7 @@ class Dynamics
     {
         config()->set('dynamics.connection', 'default');
         config()->set('dynamics.connections.default', [
-            'base_url' => 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})',
+            'base_url' => 'dynamics/',
             'parameters' => [
                 'tenant_id' => '::tenant-id::',
                 'environment' => '::environment::',

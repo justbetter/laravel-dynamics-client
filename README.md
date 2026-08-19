@@ -295,7 +295,7 @@ use JustBetter\DynamicsClient\Client\Dynamics;
 Dynamics::fake();
 
 Http::fake([
-    'https://api.businesscentral.dynamics.com/v2.0/::tenant-id::/::environment::/api/v2.0/companies(::company-id::)/customers*' => Http::response([
+    'dynamics/customers*' => Http::response([
         'value' => [
             [
                 '@odata.etag' => '::etag::',

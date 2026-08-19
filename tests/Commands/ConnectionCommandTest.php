@@ -15,7 +15,7 @@ final class ConnectionCommandTest extends TestCase
 {
     public const string TOKEN_URL = 'https://login.microsoftonline.com/::tenant-id::/oauth2/v2.0/token';
 
-    public const string BASE_URL = 'https://api.businesscentral.dynamics.com/v2.0/::tenant-id::/::environment::/api/v2.0/companies(::company-id::)';
+    public const string BASE_URL = 'dynamics/';
 
     protected function fakeToken(): void
     {

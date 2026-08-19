@@ -60,7 +60,7 @@ final class BuildRequestTest extends TestCase
         app(BuildRequest::class)->build($dynamics)->get('customers');
 
         Http::assertSent(function (Request $request): bool {
-            return $request->url() === 'https://api.businesscentral.dynamics.com/v2.0/::tenant-id::/::environment::/api/v2.0/companies(::company-id::)/customers'
+            return $request->url() === 'dynamics/customers'
                 && $request->header('Accept') === ['application/json']
                 && $request->header('Content-Type') === ['application/json'];
         });

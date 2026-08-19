@@ -49,7 +49,7 @@ final class DynamicsTest extends TestCase
         ));
     }
 
-    public const string BASE_URL = 'https://api.businesscentral.dynamics.com/v2.0/::tenant-id::/::environment::/api/v2.0/companies(::company-id::)';
+    public const string BASE_URL = 'dynamics';
 
     protected function fakeAuthentication(): void
     {
@@ -223,10 +223,12 @@ final class DynamicsTest extends TestCase
         $this->assertSame('::environment::', $dynamics->parameter('environment'));
     }
 
+    public const string BASE_URL_TEMPLATE = 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})';
+
     #[Test]
     public function it_can_build_the_base_url_and_token_url(): void
     {
-        $this->setConnection();
+        $this->setConnection(['base_url' => self::BASE_URL_TEMPLATE]);
 
         $dynamics = app(Dynamics::class)
             ->set('environment', '::other-environment::')
@@ -247,6 +249,7 @@ final class DynamicsTest extends TestCase
     public function it_can_throw_an_exception_for_a_missing_parameter(): void
     {
         $this->setConnection([
+            'base_url' => self::BASE_URL_TEMPLATE,
             'parameters' => [
                 'tenant_id' => '::tenant-id::',
                 'environment' => '::environment::',
@@ -377,7 +380,7 @@ final class DynamicsTest extends TestCase
     }
 
     #[Test]
-    public function it_can_perform_a_base_level_request_without_a_trailing_slash(): void
+    public function it_can_perform_a_base_level_request_without_duplicating_the_base_url(): void
     {
         $this->setConnection();
         Http::fake();
@@ -385,7 +388,7 @@ final class DynamicsTest extends TestCase
 
         app(Dynamics::class)->get('');
 
-        Http::assertSent(fn (Request $request): bool => $request->url() === self::BASE_URL);
+        Http::assertSent(fn (Request $request): bool => $request->url() === self::BASE_URL.'/');
     }
 
     #[Test]
@@ -878,7 +881,7 @@ final class DynamicsTest extends TestCase
 
         $dynamics = app(Dynamics::class);
 
-        $this->assertSame(self::BASE_URL, $dynamics->baseUrl());
+        $this->assertSame(self::BASE_URL.'/', $dynamics->baseUrl());
         $this->assertSame('https://login.microsoftonline.com/::tenant-id::/oauth2/v2.0/token', $dynamics->tokenUrl());
     }
 
@@ -888,7 +891,7 @@ final class DynamicsTest extends TestCase
         Dynamics::fake();
 
         Http::fake([
-            'https://api.businesscentral.dynamics.com/*' => Http::response(['value' => []]),
+            'dynamics/*' => Http::response(['value' => []]),
         ]);
 
         $response = app(Dynamics::class)->get('customers');
