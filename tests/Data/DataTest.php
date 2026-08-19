@@ -1,41 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Data;
 
 use Illuminate\Validation\ValidationException;
-use JustBetter\DynamicsClient\Data\TokenData;
+use JustBetter\DynamicsClient\Tests\Fakes\FakeData;
 use JustBetter\DynamicsClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class DataTest extends TestCase
+final class DataTest extends TestCase
 {
     #[Test]
-    public function it_can_interact_with_data(): void
+    public function it_can_validate_its_attributes(): void
     {
-        $tokenData = TokenData::of([
-            'token_type' => '::token-type::',
-            'expires_in' => 3600,
-            'ext_expires_in' => 3600,
-            'access_token' => '::access-token::',
-        ]);
+        $data = FakeData::make(['value' => '::value::'])->validate();
 
-        $this->assertTrue(isset($tokenData['access_token']));
-        $this->assertEquals('::access-token::', $tokenData['access_token']);
-
-        $tokenData['access_token'] = '::new-access-token::';
-
-        $this->assertEquals('::new-access-token::', $tokenData['access_token']);
-
-        unset($tokenData['access_token']);
-
-        $this->assertNull($tokenData['access_token']);
+        $this->assertSame('::value::', $data->value);
     }
 
     #[Test]
-    public function it_can_throw_exceptions(): void
+    public function it_can_throw_an_exception_for_invalid_attributes(): void
     {
         $this->expectException(ValidationException::class);
 
-        TokenData::of([]);
+        FakeData::make()->validate();
     }
 }

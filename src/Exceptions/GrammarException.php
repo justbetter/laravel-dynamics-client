@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace JustBetter\DynamicsClient\Exceptions;
 
-use Exception;
-
-class DynamicsException extends Exception
+class GrammarException extends DynamicsException
 {
     //
 }

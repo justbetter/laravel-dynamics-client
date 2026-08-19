@@ -1,37 +1,53 @@
 <?php
 
-use JustBetter\DynamicsClient\OData\Pages\Customer;
+declare(strict_types=1);
 
 return [
 
-    /* Resource Configuration */
-    'resources' => [
-        Customer::class => 'CustomerCard',
-    ],
-
-    /* Default Dynamics Connection Name */
+    /* Default Dynamics connection name */
     'connection' => env('DYNAMICS_CONNECTION', 'default'),
 
-    /* Available Dynamics Connections */
+    /* Available Dynamics connections */
     'connections' => [
         'default' => [
-            'base_url' => env('DYNAMICS_BASE_URL'),
-            'version' => env('DYNAMICS_VERSION', 'ODataV4'),
-            'company' => env('DYNAMICS_COMPANY'),
-            'username' => env('DYNAMICS_USERNAME'),
-            'password' => env('DYNAMICS_PASSWORD'),
-            'auth' => env('DYNAMICS_AUTH', 'ntlm'),
-            'oauth' => [
-                'client_id' => env('DYNAMICS_OAUTH_CLIENT_ID'),
-                'client_secret' => env('DYNAMICS_OAUTH_CLIENT_SECRET'),
-                'redirect_uri' => env('DYNAMICS_OAUTH_REDIRECT_URI'),
-                'scope' => env('DYNAMICS_OAUTH_SCOPE'),
-                'grant_type' => env('DYNAMICS_OAUTH_GRANT_TYPE', 'client_credentials'),
+            /* Business Central API URL template. Every "{key}" is resolved with the parameters below. */
+            'base_url' => 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})',
+
+            /* Default value for each placeholder in the URL templates. All of them can be overridden at runtime. */
+            'parameters' => [
+                'tenant_id' => env('DYNAMICS_TENANT_ID'),
+                'environment' => env('DYNAMICS_ENVIRONMENT'),
+                'api' => env('DYNAMICS_API', 'v2.0'),
+                'company_id' => env('DYNAMICS_COMPANY_ID'),
             ],
-            'page_size' => env('DYNAMICS_PAGE_SIZE', 1000),
-            'options' => [
-                'connect_timeout' => env('DYNAMICS_TIMEOUT', 30),
+
+            /* Map a friendly name to a company ID, e.g. 'acme' => env('DYNAMICS_COMPANY_ACME_ID') */
+            'companies' => [
+                //
             ],
+
+            /* OAuth client credentials */
+            'client_id' => env('DYNAMICS_OAUTH_CLIENT_ID'),
+            'client_secret' => env('DYNAMICS_OAUTH_CLIENT_SECRET'),
+
+            /* OAuth token URL template, resolved with the same parameters as the base URL */
+            'token_url' => env('DYNAMICS_OAUTH_TOKEN_URL', 'https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token'),
+
+            /* OAuth scope */
+            'scope' => env('DYNAMICS_OAUTH_SCOPE', 'https://api.businesscentral.dynamics.com/.default'),
+
+            /* OAuth grant type */
+            'grant_type' => env('DYNAMICS_OAUTH_GRANT_TYPE', 'client_credentials'),
+
+            /* The amount of records to request per page */
+            'page_size' => (int) env('DYNAMICS_PAGE_SIZE', 1000),
+
+            /* Specify the timeout (in seconds) for the request. */
+            'timeout' => (int) env('DYNAMICS_TIMEOUT', 30),
+
+            /* Specify the connection timeout (in seconds) for the request. */
+            'connect_timeout' => (int) env('DYNAMICS_CONNECT_TIMEOUT', 10),
+
             'availability' => [
                 /* The response codes that should trigger the availability check in addition to connection timeouts */
                 'codes' => [502, 503, 504],
@@ -50,5 +66,4 @@ return [
             ],
         ],
     ],
-
 ];

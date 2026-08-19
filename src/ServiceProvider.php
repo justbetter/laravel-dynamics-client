@@ -1,20 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use JustBetter\DynamicsClient\Actions\AuthenticateRequest;
 use JustBetter\DynamicsClient\Actions\Availability\CheckAvailability;
 use JustBetter\DynamicsClient\Actions\Availability\RegisterUnavailability;
-use JustBetter\DynamicsClient\Client\ClientFactory;
-use JustBetter\DynamicsClient\Commands\TestConnection;
+use JustBetter\DynamicsClient\Actions\BuildRequest;
+use JustBetter\DynamicsClient\Actions\OAuth\RequestAccessToken;
+use JustBetter\DynamicsClient\Commands\ConnectionCommand;
 use JustBetter\DynamicsClient\Events\DynamicsResponseEvent;
 use JustBetter\DynamicsClient\Events\DynamicsTimeoutEvent;
 use JustBetter\DynamicsClient\Listeners\ResponseAvailabilityListener;
 use JustBetter\DynamicsClient\Listeners\TimeoutAvailabilityListener;
+use Override;
 
 class ServiceProvider extends BaseServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this
@@ -31,9 +37,11 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function registerActions(): static
     {
-        ClientFactory::bind();
+        BuildRequest::bind();
+        AuthenticateRequest::bind();
         CheckAvailability::bind();
         RegisterUnavailability::bind();
+        RequestAccessToken::bind();
 
         return $this;
     }
@@ -59,7 +67,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                TestConnection::class,
+                ConnectionCommand::class,
             ]);
         }
 

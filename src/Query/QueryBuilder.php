@@ -1,250 +1,228 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Query;
 
 use Closure;
-use Generator;
-use Illuminate\Support\Enumerable;
-use Illuminate\Support\LazyCollection;
-use JustBetter\DynamicsClient\Exceptions\NotFoundException;
-use JustBetter\DynamicsClient\OData\BaseResource;
-use SaintSystems\OData\Entity;
-use SaintSystems\OData\ODataClient;
-use SaintSystems\OData\Query\Builder;
+use Illuminate\Support\Arr;
+use JustBetter\DynamicsClient\Exceptions\GrammarException;
 
-/**
- * @method static select(array|mixed $properties = [])
- * @method static addSelect(array|mixed $select)
- * @method static from(string $entitySet)
- * @method static whereKey(string $id)
- * @method static expand(array $properties = [])
- * @method static order(array|mixed $properties = [])
- * @method static orderBySQL(string $sql = '')
- * @method static mergeWheres(array $wheres, array $bindings)
- * @method static where(string|array|\Closure $column, string $operator = null, mixed $value = null, string $boolean = 'and')
- * @method static orWhere(string|array|\Closure $column, string $operator = null, mixed $value = null)
- * @method static whereRaw(string $rawString, string $boolean = 'and')
- * @method static orWhereRaw(string $rawString)
- * @method static whereDate(string|array|\Closure $column, string $operator = null, mixed $value = null, string $boolean = 'and')
- * @method static orWhereDate(string|array|\Closure $column, string $operator = null, mixed $value = null)
- * @method static whereColumn(string|array $first, string $operator = null, string $second = null, string $boolean = 'and')
- * @method static orWhereColumn(string|array $first, string $operator = null, string $second = null)
- * @method static whereNested(\Closure $callback, string $boolean = 'and')
- * @method static forNestedWhere()
- * @method static addNestedWhereQuery(self $query, string $boolean = 'and')
- * @method static whereNull(string $column, string $boolean = 'and', bool $not = false)
- * @method static orWhereNull(string $column)
- * @method static whereNotNull(string $column, string $boolean = 'and')
- * @method static orWhereNotNull(string $column)
- * @method static skip(int $value)
- * @method static take(int $value)
- * @method static addBinding(mixed $value, string $type = 'where')
- */
 class QueryBuilder
 {
-    protected Builder $builder;
+    /** @var array<int, array<int, string>> */
+    protected array $groups = [];
+
+    protected ?string $select = null;
+
+    protected ?string $expand = null;
+
+    /** @var array<int, string> */
+    protected array $orders = [];
+
+    protected ?int $top = null;
+
+    protected ?int $skip = null;
 
     public function __construct(
-        public ODataClient $client,
-        public string $connection,
-        public string $endpoint,
-        public string $class,
-    ) {
-        $this->builder = (new Builder($client))->from($endpoint);
+        protected Grammar $grammar
+    ) {}
+
+    public static function make(): static
+    {
+        return app(static::class);
     }
 
-    public function __call(string $name, array $arguments): mixed
+    /** @param array<int, string>|string $fields */
+    public function select(array|string $fields): static
     {
-        if (method_exists($this, $name)) {
-            return $this->$name(...$arguments);
-        }
-
-        $this->builder->$name(...$arguments);
+        $this->select = collect(Arr::wrap($fields))->implode(',');
 
         return $this;
     }
 
-    public function newResourceInstance(): BaseResource
+    /** @param array<int, string>|string $relations */
+    public function expand(array|string $relations): static
     {
-        /** @var class-string<BaseResource> $class */
-        $class = $this->class;
+        $this->expand = collect(Arr::wrap($relations))->implode(',');
 
-        return $class::new($this->connection, $this->endpoint);
+        return $this;
     }
 
-    public function mapToClass(Entity $entity): BaseResource
+    public function where(string $field, mixed $operator = null, mixed $value = null): static
     {
-        return $this->newResourceInstance()->fromEntity($entity);
+        return $this->addGroup($this->resolve($field, $operator, $value));
     }
 
-    public function get(): Enumerable
+    public function orWhere(string $field, mixed $operator = null, mixed $value = null): static
     {
-        return $this->builder->get()->map(fn (Entity $entity): BaseResource => $this->mapToClass($entity));
+        return $this->addToGroup($this->resolve($field, $operator, $value));
     }
 
-    public function first(): ?BaseResource
+    /** @param array<int, mixed> $values */
+    public function whereIn(string $field, array $values): static
     {
-        /** @var ?Entity $entity */
-        $entity = $this->builder->first();
+        $this->groups[] = collect($values)
+            ->map(fn (mixed $value): string => $this->condition($field, '=', $value))
+            ->all();
 
-        return is_null($entity)
-            ? null
-            : $this->mapToClass($entity);
+        return $this;
     }
 
-    public function firstOrFail(): BaseResource
+    /** @param array<int, mixed> $values */
+    public function whereNotIn(string $field, array $values): static
     {
-        $resource = $this->first();
+        $conditions = collect($values)
+            ->map(fn (mixed $value): string => $this->condition($field, '!=', $value))
+            ->implode(' and ');
 
-        if ($resource === null) {
-            throw new NotFoundException;
-        }
-
-        return $resource;
+        return $this->whereRaw('('.$conditions.')');
     }
 
-    public function find(mixed ...$values): ?BaseResource
+    public function whereNull(string $field): static
     {
-        $baseResource = $this->newResourceInstance();
-
-        $combined = array_combine($baseResource->primaryKey, $values);
-
-        foreach ($combined as $key => $value) {
-            if ($baseResource->getCastType($key) === 'date') {
-                $this->builder->whereDate($key, '=', $value);
-            } elseif ($baseResource->getCastType($key) === 'guid') {
-                $this->builder->whereRaw("$key eq $value");
-            } else {
-                $this->builder->where($key, '=', $value);
-            }
-        }
-
-        /** @var ?Entity $entity */
-        $entity = $this->builder->first();
-
-        return is_null($entity)
-            ? null
-            : $this->mapToClass($entity);
+        return $this->addGroup($this->condition($field, '=', null));
     }
 
-    public function findOrFail(mixed ...$values): BaseResource
+    public function orWhereNull(string $field): static
     {
-        $resource = $this->find(...$values);
-
-        if ($resource === null) {
-            throw new NotFoundException;
-        }
-
-        return $resource;
+        return $this->addToGroup($this->condition($field, '=', null));
     }
 
-    public function firstOrCreate(array $attributes = [], array $values = []): BaseResource
+    public function whereNotNull(string $field): static
     {
-        /** @var ?BaseResource $resource */
-        $resource = $this->where($attributes)->first();
-
-        if ($resource !== null) {
-            return $resource;
-        }
-
-        $data = array_merge($attributes, $values);
-
-        return $this->newResourceInstance()->create($data);
+        return $this->addGroup($this->condition($field, '!=', null));
     }
 
-    public function updateOrCreate(array $attributes = [], array $values = [], bool $force = false): BaseResource
+    public function orWhereNotNull(string $field): static
     {
-        /** @var ?BaseResource $resource */
-        $resource = $this->where($attributes)->first();
-
-        if ($resource !== null) {
-            return $resource->update($values, $force);
-        }
-
-        $data = array_merge($attributes, $values);
-
-        return $this->newResourceInstance()->create($data);
+        return $this->addToGroup($this->condition($field, '!=', null));
     }
 
-    public function lazy(?int $pageSize = null): LazyCollection
+    public function whereGuid(string $field, string $value): static
     {
-        return LazyCollection::make(function () use ($pageSize): Generator {
-            $pageSize ??= (int) config('dynamics.connections.'.$this->connection.'.page_size');
-            $page = 0;
-
-            $hasNext = true;
-
-            while ($hasNext) {
-                if ($page > 0) {
-                    $this->builder->skip($page * $pageSize);
-                }
-
-                $this->builder->take($pageSize);
-
-                $records = $this->get();
-
-                $hasNext = $records->count() === $pageSize;
-
-                foreach ($records as $record) {
-                    yield $record;
-                }
-
-                $page++;
-            }
-        });
+        return $this->addGroup(
+            $field.' '.$this->grammar->getOperator('=').' '.$this->grammar->guid($value)
+        );
     }
 
-    public function count(): int
+    public function whereRaw(string $filter): static
     {
-        /** @var ?int $count */
-        $count = $this->builder->take(1)->count();
-        $count ??= 0;
+        return $this->addGroup($filter);
+    }
 
-        return $count;
+    public function orderBy(string $field, string $direction = 'asc'): static
+    {
+        $this->orders[] = $field.' '.$this->direction($direction);
+
+        return $this;
+    }
+
+    public function orderByDesc(string $field): static
+    {
+        return $this->orderBy($field, 'desc');
+    }
+
+    public function skip(int $skip): static
+    {
+        $this->skip = $skip;
+
+        return $this;
+    }
+
+    public function take(int $take): static
+    {
+        $this->top = $take;
+
+        return $this;
     }
 
     public function limit(int $limit): static
     {
-        $this->builder->take($limit);
-
-        return $this;
+        return $this->take($limit);
     }
 
-    public function whereIn(string $field, array $values): static
+    public function paginate(int $page, int $pageSize): static
     {
-        $this->builder->where(function (Builder $builder) use ($field, $values): void {
-            foreach (array_values($values) as $index => $value) {
-                $method = $index === 0 ? 'where' : 'orWhere';
-
-                $builder->$method($field, '=', $value);
-            }
-        });
-
-        return $this;
+        return $this->skip(($page - 1) * $pageSize)->take($pageSize);
     }
 
-    public function whereNotIn(string $field, array $values): static
+    public function when(mixed $condition, Closure $callback): static
     {
-        $this->builder->where(function (Builder $builder) use ($field, $values): void {
-            foreach ($values as $value) {
-                $builder->where($field, '!=', $value);
-            }
-        });
-
-        return $this;
-    }
-
-    public function when(mixed $statement, Closure $closure): static
-    {
-        if ($statement) {
-            $closure($this, $statement);
+        if ($condition) {
+            $callback($this);
         }
 
         return $this;
     }
 
-    public function dd(): void
+    /** @return array<string, string|int> */
+    public function get(): array
     {
-        dd($this->builder->toRequest());
+        $filter = $this->compileFilter();
+
+        return collect([
+            '$filter' => $filter === '' ? null : $filter,
+            '$select' => $this->select,
+            '$expand' => $this->expand,
+            '$orderby' => $this->orders === [] ? null : collect($this->orders)->implode(','),
+            '$top' => $this->top,
+            '$skip' => $this->skip,
+        ])
+            ->reject(fn (string|int|null $value): bool => $value === null)
+            ->all();
+    }
+
+    protected function resolve(string $field, mixed $operator, mixed $value): string
+    {
+        if ($value === null) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        throw_if(! is_string($operator), GrammarException::class, 'Operator of type "'.get_debug_type($operator).'" is unknown.');
+
+        return $this->condition($field, $operator, $value);
+    }
+
+    protected function condition(string $field, string $operator, mixed $value): string
+    {
+        return $field.' '.$this->grammar->getOperator($operator).' '.$this->grammar->value($value);
+    }
+
+    protected function direction(string $direction): string
+    {
+        return strtolower(trim($direction)) === 'desc'
+            ? 'desc'
+            : 'asc';
+    }
+
+    protected function compileFilter(): string
+    {
+        return collect($this->groups)
+            ->map(function (array $conditions): string {
+                $filter = collect($conditions)->implode(' or ');
+
+                return count($conditions) > 1 ? '('.$filter.')' : $filter;
+            })
+            ->implode(' and ');
+    }
+
+    protected function addGroup(string $condition): static
+    {
+        $this->groups[] = [$condition];
+
+        return $this;
+    }
+
+    protected function addToGroup(string $condition): static
+    {
+        if ($this->groups === []) {
+            return $this->addGroup($condition);
+        }
+
+        $this->groups[count($this->groups) - 1][] = $condition;
+
+        return $this;
     }
 }

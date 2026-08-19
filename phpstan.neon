@@ -7,6 +7,5 @@ parameters:
         - src
         - tests
     level: 8
-    ignoreErrors:
-        - identifier: missingType.iterableValue
-        - identifier: missingType.generics
+    universalObjectCratesClasses:
+        - JustBetter\DynamicsClient\Data\Entity

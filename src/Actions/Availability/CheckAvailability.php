@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Actions\Availability;
 
 use JustBetter\DynamicsClient\Contracts\Availability\ChecksAvailability;
 
 class CheckAvailability implements ChecksAvailability
 {
-    const AVAILABLE_KEY = 'dynamics-client:availability:';
+    public const string AVAILABLE_KEY = 'dynamics-client:availability:';
 
     public function check(string $connection): bool
     {

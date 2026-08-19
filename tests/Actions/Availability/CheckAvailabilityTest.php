@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Actions\Availability;
 
 use JustBetter\DynamicsClient\Actions\Availability\CheckAvailability;
 use JustBetter\DynamicsClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class CheckAvailabilityTest extends TestCase
+final class CheckAvailabilityTest extends TestCase
 {
     #[Test]
     public function it_checks_availability(): void

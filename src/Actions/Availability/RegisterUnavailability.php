@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Actions\Availability;
 
 use JustBetter\DynamicsClient\Contracts\Availability\RegistersUnavailability;
 
 class RegisterUnavailability implements RegistersUnavailability
 {
-    public const COUNT_KEY = 'dynamics-client:unavailable-count:';
+    public const string COUNT_KEY = 'dynamics-client:unavailable-count:';
 
     public function register(string $connection): void
     {

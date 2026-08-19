@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Actions\Availability;
 
 use JustBetter\DynamicsClient\Actions\Availability\CheckAvailability;
@@ -7,7 +9,7 @@ use JustBetter\DynamicsClient\Actions\Availability\RegisterUnavailability;
 use JustBetter\DynamicsClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class RegisterUnavailabilityTest extends TestCase
+final class RegisterUnavailabilityTest extends TestCase
 {
     #[Test]
     public function it_keeps_track_of_count(): void
