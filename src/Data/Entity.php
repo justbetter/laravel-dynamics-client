@@ -75,14 +75,14 @@ class Entity extends Data
     {
         $value = $this->value('@odata.etag');
 
-        return is_string($value) && $value !== '' ? $value : null;
+        return filled($value) ? $value : null;
     }
 
     public function id(): ?string
     {
         $value = $this->value($this->idKey);
 
-        return is_string($value) && $value !== '' ? $value : null;
+        return filled($value) ? $value : null;
     }
 
     public function metadata(?string $key = null): mixed
@@ -108,7 +108,7 @@ class Entity extends Data
     {
         $endpoint = $this->metadata('endpoint');
 
-        return is_string($endpoint) && $endpoint !== '' ? $endpoint : null;
+        return filled($endpoint) ? $endpoint : null;
     }
 
     public function url(?string $endpoint = null): string

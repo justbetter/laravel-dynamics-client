@@ -22,7 +22,6 @@ final class GrammarTest extends TestCase
     #[DataProvider('operators')]
     public function it_can_map_operators(string $operator, string $expected): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->assertSame($expected, $grammar->getOperator($operator));
@@ -49,7 +48,6 @@ final class GrammarTest extends TestCase
     #[Test]
     public function it_throws_an_exception_for_an_unknown_operator(): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->expectException(GrammarException::class);
@@ -62,7 +60,6 @@ final class GrammarTest extends TestCase
     #[DataProvider('values')]
     public function it_can_format_values(mixed $value, string $expected): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->assertSame($expected, $grammar->value($value));
@@ -92,7 +89,6 @@ final class GrammarTest extends TestCase
     #[Test]
     public function it_does_not_mutate_the_given_date(): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $date = new DateTime('2026-08-18 02:00:00', new DateTimeZone('Europe/Amsterdam'));
@@ -105,7 +101,6 @@ final class GrammarTest extends TestCase
     #[Test]
     public function it_throws_an_exception_for_an_unsupported_value(): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->expectException(GrammarException::class);
@@ -117,7 +112,6 @@ final class GrammarTest extends TestCase
     #[Test]
     public function it_can_format_a_guid_unquoted(): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->assertSame(
@@ -129,7 +123,6 @@ final class GrammarTest extends TestCase
     #[Test]
     public function it_throws_an_exception_for_an_invalid_guid(): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->expectException(GrammarException::class);
@@ -141,7 +134,6 @@ final class GrammarTest extends TestCase
     #[Test]
     public function it_can_catch_a_grammar_exception_as_a_dynamics_exception(): void
     {
-        /** @var Grammar $grammar */
         $grammar = app(Grammar::class);
 
         $this->assertThrows(fn (): string => $grammar->getOperator('like'), DynamicsException::class);

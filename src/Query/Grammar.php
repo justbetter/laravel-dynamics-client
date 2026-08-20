@@ -10,7 +10,6 @@ use DateTimeZone;
 use JustBetter\DynamicsClient\Exceptions\GrammarException;
 use Stringable;
 
-/** @see https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/dynamics-filtering */
 class Grammar
 {
     /** @var array<string, string> */
