@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/1.10.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/2.0.0...main)
+## [2.0.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/2.0.0) - 2026-08-20
+
+### What's Changed
+* Refactor package by @VincentBean in https://github.com/justbetter/laravel-dynamics-client/pull/46
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/1.10.0...2.0.0
+
 ## [1.10.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/1.10.0) - 2026-03-19
 
 ### What's Changed
