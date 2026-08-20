@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Tests\Listeners;
 
 use JustBetter\DynamicsClient\Contracts\Availability\RegistersUnavailability;
@@ -9,7 +11,7 @@ use JustBetter\DynamicsClient\Tests\TestCase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 
-class TimeoutAvailabilityListenerTest extends TestCase
+final class TimeoutAvailabilityListenerTest extends TestCase
 {
     #[Test]
     public function it_calls_action(): void

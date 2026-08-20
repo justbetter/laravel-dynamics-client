@@ -1,48 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\DynamicsClient\Data;
 
-use ArrayAccess;
-use Illuminate\Contracts\Support\Arrayable;
-use JustBetter\DynamicsClient\Concerns\ValidatesData;
+use Illuminate\Support\Fluent;
 
-abstract class Data implements Arrayable, ArrayAccess
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @extends Fluent<TKey, TValue>
+ */
+abstract class Data extends Fluent
 {
-    use ValidatesData;
+    /** @var array<string, mixed> */
+    protected array $rules = [];
 
-    final public function __construct(
-        public array $data
-    ) {
-        $this->validate($data);
-    }
-
-    public function offsetExists(mixed $offset): bool
+    public function validate(): static
     {
-        return array_key_exists($offset, $this->data);
-    }
+        validator($this->attributes, $this->rules)->validate();
 
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->data[$offset] ?? null;
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        $this->data[$offset] = $value;
-    }
-
-    public function offsetUnset(mixed $offset): void
-    {
-        unset($this->data[$offset]);
-    }
-
-    public static function of(array $data): static
-    {
-        return new static($data);
-    }
-
-    public function toArray(): array
-    {
-        return $this->data;
+        return $this;
     }
 }

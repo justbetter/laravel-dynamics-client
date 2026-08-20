@@ -4,31 +4,36 @@
 
 # Laravel Dynamics Client
 
-This package will connect you to your Microsoft Dynamics web services via OData. Custom web services can easily be
-implemented and mapped to your liking. It uses the [HTTP client](https://laravel.com/docs/master/http-client) of Laravel
-which means that you can easily fake requests when writing tests.
-
-The way we interact with OData has been inspired by Laravel's Query Builder.
+This package connects your Laravel application to the Microsoft Dynamics 365 Business Central API. It authenticates
+with OAuth client credentials and uses the [HTTP client](https://laravel.com/docs/master/http-client) of Laravel, which
+means responses, retries and fakes work exactly as you already know them.
 
 ```php
-$customer = Customer::query()->findOrFail('1000');
+use JustBetter\DynamicsClient\Client\Dynamics;
+use JustBetter\DynamicsClient\Data\Entity;
+use JustBetter\DynamicsClient\Query\QueryBuilder;
 
-$customer->update([
-    'Name' => 'John Doe',
-]);
+$dynamics = app(Dynamics::class);
 
-$customers = Customer::query()
-    ->where('City', '=', 'Alkmaar')
-    ->lazy();
+$customers = $dynamics->entities('customers', QueryBuilder::make()
+    ->where('city', 'Alkmaar')
+    ->orderBy('displayName')
+    ->get());
 
-$items = Item::query()
-    ->whereIn('No', ['1000', '2000'])
-    ->get();
+$customer = $customers->first();
 
-$customer = Customer::new()->create([
-    'Name' => 'Jane Doe',
-]);
+$customer->displayName = 'John Doe';
+
+$dynamics->entity($customer)->update();
 ```
+
+> [!IMPORTANT]
+> Upgrading from 1.x? See [UPGRADING](UPGRADING.md).
+
+## Requirements
+
+- PHP 8.4 or higher
+- Laravel 12.0 or 13.0
 
 ## Installation
 
@@ -38,8 +43,6 @@ Install the composer package.
 composer require justbetter/laravel-dynamics-client
 ```
 
-## Setup
-
 Publish the configuration of the package.
 
 ```shell
@@ -48,308 +51,288 @@ php artisan vendor:publish --provider="JustBetter\DynamicsClient\ServiceProvider
 
 ## Configuration
 
-Add your Dynamics credentials in the `.env`:
-
-```
-DYNAMICS_BASE_URL=https://127.0.0.1:7048/DYNAMICS
-DYNAMICS_VERSION=ODataV4
-DYNAMICS_COMPANY=
-DYNAMICS_USERNAME=
-DYNAMICS_PASSWORD=
-DYNAMICS_PAGE_SIZE=1000
-```
-
-Be sure the `DYNAMICS_PAGE_SIZE` is set equally to the `Max Page Size` under `OData Services` in the configuration of
-Dynamics. This is crucial for the functionalities of the `lazy` method of the `QueryBuilder`.
-
-### Authentication
-
-> **Note:** Be sure that Dynamics has been properly configured for OData.
-
-This package uses NTLM authentication by default. If you are required to use basic auth or OAuth you can change this in
-your `.env`.
-
-```
-DYNAMICS_AUTH=basic
-```
-
-#### OAuth
-
-To setup OAuth add the following to your `.env`
+Add your Dynamics credentials to your `.env`:
 
 ```dotenv
-DYNAMICS_AUTH=oauth
+DYNAMICS_TENANT_ID=
+DYNAMICS_ENVIRONMENT=
+DYNAMICS_COMPANY_ID=
 DYNAMICS_OAUTH_CLIENT_ID=
 DYNAMICS_OAUTH_CLIENT_SECRET=
-DYNAMICS_OAUTH_REDIRECT_URI=
-DYNAMICS_OAUTH_SCOPE=
 ```
+
+### OAuth
 
 When using D365 cloud with [Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow) your redirect uri will be: `https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token`
 and your base url should be `https://api.businesscentral.dynamics.com/v2.0/<tenant>/<environment>`.
 
-### Connections
+### URL templates
 
-Multiple connections are supported. You can easily update your `dynamics` configuration to add as many connections as
-you wish.
+Both the API URL and the token URL are templates. Every `{key}` is replaced with the parameter of the same name:
 
 ```php
-// Will use the default connection.
-Customer::query()->first();
+'base_url' => 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})',
+'token_url' => 'https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token',
 
-// Uses the supplied connection.
-Customer::query('other_connection')->first();
+'parameters' => [
+    'tenant_id' => env('DYNAMICS_TENANT_ID'),
+    'environment' => env('DYNAMICS_ENVIRONMENT'),
+    'api' => env('DYNAMICS_API', 'v2.0'),
+    'company_id' => env('DYNAMICS_COMPANY_ID'),
+],
 ```
 
-By default, the client will use the `company` field to select the Dynamics company.
-If you wish to use the company's UUID you can simply add an `uuid` field:
+## Parameter overrides
+
+Every parameter can be overridden.
 
 ```php
-        'Company' => [
-            'base_url' => env('DYNAMICS_BASE_URL'),
-            'version' => env('DYNAMICS_VERSION', 'ODataV4'),
-            'company' => 'Company Name',
-            'uuid' => 'Company UUID', // The UUID will be prioritized over the company name
+$dynamics = app(Dynamics::class);
+
+$dynamics
+    ->tenantId('::tenant-id::')
+    ->environment('Production')
+    ->api('justbetter/general/v1.0')
+    ->companyId('::company-id::');
+
+// Any other placeholder, or several at once.
+$dynamics->set('environment', 'Sandbox');
+$dynamics->parameters(['environment' => 'Sandbox', 'api' => 'v2.0']);
+
+$dynamics->reset();
 ```
 
-## Adding web services
+### Companies
 
-Adding a web service to your configuration is easily done. Start by creating your own resource class to map te data to.
+Rather than passing company IDs, map a friendly name to an ID in your configuration:
 
 ```php
-use JustBetter\DynamicsClient\OData\BaseResource;
-
-class Customer extends BaseResource
-{
-    //
-}
+'companies' => [
+    'acme' => env('DYNAMICS_COMPANY_ACME_ID'),
+    'other' => env('DYNAMICS_COMPANY_OTHER_ID'),
+],
 ```
 
-### Primary Key
-
-By default, the primary key of a resource will default to `No` as a string. You can override this by supplying the
-variable `$primaryKey`.
+Select one with `company()`, which resolves the name and sets the `company_id` parameter:
 
 ```php
-public array $primaryKey = [
-    'Code',
-];
+$dynamics->company('acme')->entities('customers');
 ```
 
-### Data Casting
+## Multiple connections
 
-Fields in resources will by default be treated as a string. For some fields, like a line number, this should be casted
-to an integer.
+Multiple connections are supported. Add as many as you wish to the `connections` array of your configuration and
+select one with `connection()`:
 
 ```php
-public array $casts = [
-    'Line_No' => 'int',
-];
+$dynamics->connection('other')->entities('customers');
 ```
 
-### Registering Your Resource
+## Requests
 
-Lastly, you should register your resource in your configuration file to let the package know where the web service is
-located. This should correspond to the service name configured in Dynamics.
-
-If your resource class name is the same as the service name, no manual configuration is needed.
-
-> **Note:** Make sure your web service is published.
+The client exposes the HTTP verbs directly. Every method returns the `Illuminate\Http\Client\Response`,.
 
 ```php
-return [
+$response = $dynamics->get('customers', ['$top' => 10]);
+$response = $dynamics->post('customers', ['displayName' => 'John Doe']);
+$response = $dynamics->patch('customers(::id::)', ['displayName' => 'Jane Doe']);
+$response = $dynamics->put('customers(::id::)', ['displayName' => 'Jane Doe']);
+$response = $dynamics->delete('customers(::id::)');
 
-    /* Resource Configuration */
-    'resources' => [
-        Customer::class => 'CustomerCard',
-    ],
-
-];
+$response->throw();
 ```
 
-## Query Builder
-
-Querying data is easily done using the QueryBuilder.
-
-Using the `get` method will only return the first result page. If you wish to efficiently loop through all records,
-use `lazy` instead.
+Add headers for a single request with `header()` or `headers()`. Headers are cleared after the request is sent.
 
 ```php
-$customers = Customer::query()
-    ->where('City', '=', 'Alkmaar')
-    ->lazy()
-    ->each(function(Customer $customer): void {
+$dynamics->header('Prefer', 'return=representation')->post('customers', ['displayName' => 'John Doe']);
+```
+
+## Entities
+
+`entities()` maps the `value` array of a response onto `Entity` objects that remember the endpoint they came from:
+
+```php
+$customers = $dynamics->entities('customers');
+
+$customer = $customers->first();
+
+$customer->displayName;      // Attributes are accessed as properties
+$customer->id();             // The "id" attribute
+$customer->etag();           // The "@odata.etag" attribute
+$customer->endpoint();       // "customers"
+$customer->url();            // "customers(::id::)"
+```
+
+Use `Entity::from()` to build one from a single-record response, for example after a create:
+
+```php
+use JustBetter\DynamicsClient\Data\Entity;
+
+$response = $dynamics->post('customers', ['displayName' => 'John Doe'])->throw();
+
+$customer = Entity::from($response, ['endpoint' => 'customers']);
+```
+
+### Updating and deleting
+
+Scope the client to an entity to derive the URL and the `If-Match` header from it. The scope lasts for one request.
+
+```php
+$customer->displayName = 'Jane Doe';
+
+$dynamics->entity($customer)->update();
+```
+
+`update()` without arguments sends only the changed attributes. You may also pass an array:
+
+```php
+$dynamics->entity($customer)->update(['displayName' => 'Jane Doe']);
+```
+
+Delete the scoped entity by calling `delete()` without a path:
+
+```php
+$dynamics->entity($customer)->delete();
+```
+
+If the entity was read from another endpoint than the one you want to write to, pass the endpoint as the second
+argument:
+
+```php
+$dynamics->entity($customer, 'customers')->update();
+```
+
+### Concurrency and `If-Match`
+
+Business Central requires an `If-Match` header on every write. The client adds one for you:
+
+1. The header you set yourself with `header('If-Match', $etag)` wins.
+2. Otherwise the ETag of the scoped entity is used, so the write fails when the record changed in the meantime.
+3. Otherwise `If-Match: *` is sent, which overwrites the record regardless of its version.
+
+That means an unscoped `patch()`, `put()` or `delete()` is an unconditional write by default. Scope the call to an
+entity when you care about lost updates, or narrow it yourself:
+
+```php
+$dynamics->header('If-Match', $etag)->patch('customers(::id::)', ['displayName' => 'Jane Doe']);
+```
+
+## Lazy pagination
+
+Use `lazy()` to walk every record of an endpoint without holding them all in memory. It pages with `$top` and `$skip`
+until a page comes back with fewer records than the page size, and yields each entry of the response's `value` array
+as an array.
+
+```php
+$dynamics
+    ->lazy('customers', ['$orderby' => 'id'])
+    ->each(function (array $customer): void {
         //
     });
 ```
 
-See the `QueryBuilder` class for all available methods.
-
-## Relations
-
-Any relations published on a page can be accessed as well using the resource.
+The page size defaults to the connection's `page_size`; pass a third argument to override it per call.
 
 ```php
-$salesOrder = SalesOrder::query()->first();
-
-// Get the lines via the "relation" method.
-$salesLines = $salesOrder->relation('Relation_Name', SalesLine::class)->get();
-
-// Or use the "lines" helper on the SalesOrder.
-$salesLines = $salesOrder->lines('Relation_Name')->get();
+$dynamics->lazy('customers', ['$orderby' => 'id'], 100);
 ```
 
-Note that the `relation` method itself returns an instance of a query builder. This means that you can add additional where-clauses like you would be able to on a regular resource.
-
-## Creating records
-
-Create a new record.
+Use `lazyEntities()` when you want `Entity` objects back:
 
 ```php
-Customer::new()->create([
-    'Name' => 'John Doe'
-])
+$dynamics
+    ->lazyEntities('customers', ['$orderby' => 'id'])
+    ->each(function (Entity $customer): void {
+        //
+    });
 ```
 
-## Updating records
+## Query builder
 
-Update an existing record.
+`QueryBuilder` builds the OData query parameters.
 
 ```php
-$customer = Customer::query()->find('1000');
-$customer->update([
-    'Name' => 'John Doe',
-]);
+use JustBetter\DynamicsClient\Query\QueryBuilder;
+
+$query = QueryBuilder::make()
+    ->select(['id', 'number', 'displayName'])
+    ->where('city', 'Alkmaar')
+    ->where('balance', '>', 100)
+    ->whereIn('number', ['1000', '2000'])
+    ->whereNotNull('phoneNumber')
+    ->orderByDesc('lastModifiedDateTime')
+    ->take(50)
+    ->get();
+
+$customers = $dynamics->entities('customers', $query);
 ```
-
-## Deleting records
-
-Delete a record.
 
 ```php
-$customer = Customer::query()->find('1000');
-$customer->delete();
-```
+QueryBuilder::make()
+    ->where('city', 'Alkmaar')
+    ->where('balance', '>', 100)
+    ->orWhere('blocked', 'All')
+    ->get();
 
-## Debugging
-
-If you wish to review your query before you sent it, you may want to use the `dd` function on the builder.
-
-```php
-Customer::query()
-    ->where('City', '=', 'Alkmaar')
-    ->whereIn('No', ['1000', '2000'])
-    ->dd();
-
-// Customer?$filter=City eq 'Alkmaar' and (No eq '1000' or No eq '2000')
-```
-
-## Commands
-
-You can run the following command to check if you can successfully connect to Dynamics.
-
-```shell
-php artisan dynamics:connect {connection?}
-```
-
-## Extending
-
-If needed, it is possible to extend the provided `ClientFactory` class by creating your own. You **must** implement the `ClientFactoryContract` interface and its methods.
-
-
-```php
-use JustBetter\DynamicsClient\Exceptions\DynamicsException;
-use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
-
-class MyCustomClientFactory implements ClientFactoryContract
-{
-    public function __construct(public string $connection)
-    {
-        $config = config('dynamics.connections.'.$connection);
-
-        if (! $config) {
-            throw new DynamicsException(
-                __('Connection ":connection" does not exist', ['connection' => $connection])
-            );
-        }
-
-        $this
-            ->header('Authorization', 'Bearer ' . $config['access_token'])
-            ->header('Accept', 'application/json')
-            ->header('Content-Type', 'application/json');
-    }
-
-    ...
-}
-```
-
-You will then need to bind your custom factory as the implementation of the contract, in any of your `ServiceProvider` register method :
-
-```php
-<?php
-
-use JustBetter\DynamicsClient\Contracts\ClientFactoryContract;
-
-class AppServiceProvider extends ServiceProvider
-{
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->app->bind(ClientFactoryContract::class, MyCustomClientFactory::class);
-    }
-}
-```
-
-## Fake requests to Dynamics
-
-When writing tests you may find yourself in the need of faking a request to Dynamics. Luckily, this packages uses the
-HTTP client of Laravel to make this very easy.
-
-In order to fake all requests to Dynamics, you can call the method `fake` on any resource.
-
-> The `fake` method will fake **all** requests to Dynamics, not just the endpoint of the used resource.
-
-```php
-<?php
-
-use JustBetter\DynamicsClient\OData\BaseResource;
-
-BaseResource::fake();
-```
-
-This method will fake the Dynamics configuration and removes sensitive information like usernames and passwords. Only
-the company name will remain in order to easily test with multiple connections.
-
-```php
-<?php
-
-use Illuminate\Support\Facades\Http;
-use JustBetter\DynamicsClient\OData\Pages\Item;
-
-Item::fake();
-
-Http::fake([
-    'dynamics/ODataV4/Company(\'default\')/Item?$top=1' => Http::response([
-        'value' => [
-            [
-                '@odata.etag' => '::etag::',
-                'No' => '::no::',
-                'Description' => '::description::',
-            ],
-        ],
-    ]),
-]);
-
-$item = Item::query()->first();
+// $filter=city eq 'Alkmaar' and (balance gt 100 or blocked eq 'All')
 ```
 
 ## Availability
 
 This client can prevent requests from going to Dynamics when it is giving HTTP status codes 503, 504 or timeouts. This can be configured per connection in the `availability` settings. Enable the `throw` option to prevent any requests from going to Dynamics.
+
+## Testing
+
+Call `Dynamics::fake()` to configure a connection with placeholder credentials and stub the OAuth token request, then
+fake the HTTP client for the endpoints you call. No real credentials are needed and the URLs are stable, so you can
+key your fakes on them.
+
+```php
+use Illuminate\Support\Facades\Http;
+use JustBetter\DynamicsClient\Client\Dynamics;
+
+Dynamics::fake();
+
+Http::fake([
+    'dynamics/customers*' => Http::response([
+        'value' => [
+            [
+                '@odata.etag' => '::etag::',
+                'id' => '::id::',
+                'displayName' => 'John Doe',
+            ],
+        ],
+    ]),
+]);
+
+$customers = app(Dynamics::class)->entities('customers');
+```
+
+## Commands
+
+Run the following command to check whether you can successfully connect to Dynamics. It reads the company of the
+connection and prints its name.
+
+```shell
+php artisan dynamics:connect {connection?}
+```
+
+## Quality
+
+To ensure the quality of this package, run the following command:
+
+```shell
+composer quality
+```
+
+This will execute the following tasks:
+
+1. Runs the test suite
+2. Checks for any issues using static code analysis
+3. Checks if the code is correctly formatted
+4. Checks if code coverage is at 100%
+5. Checks for possible improvements using Rector
 
 ## Contributing
 
