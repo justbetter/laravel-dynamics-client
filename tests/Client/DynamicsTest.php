@@ -49,8 +49,6 @@ final class DynamicsTest extends TestCase
         ));
     }
 
-    public const string BASE_URL = 'dynamics';
-
     protected function fakeAuthentication(): void
     {
         $this->mock(AuthenticatesRequest::class, function (MockInterface $mock): void {
@@ -223,12 +221,10 @@ final class DynamicsTest extends TestCase
         $this->assertSame('::environment::', $dynamics->parameter('environment'));
     }
 
-    public const string BASE_URL_TEMPLATE = 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})';
-
     #[Test]
     public function it_can_build_the_base_url_and_token_url(): void
     {
-        $this->setConnection(['base_url' => self::BASE_URL_TEMPLATE]);
+        $this->setConnection(['base_url' => 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})']);
 
         $dynamics = app(Dynamics::class)
             ->set('environment', '::other-environment::')
@@ -249,7 +245,7 @@ final class DynamicsTest extends TestCase
     public function it_can_throw_an_exception_for_a_missing_parameter(): void
     {
         $this->setConnection([
-            'base_url' => self::BASE_URL_TEMPLATE,
+            'base_url' => 'https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/{environment}/api/{api}/companies({company_id})',
             'parameters' => [
                 'tenant_id' => '::tenant-id::',
                 'environment' => '::environment::',
@@ -302,7 +298,7 @@ final class DynamicsTest extends TestCase
         $this->assertTrue($response->successful());
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'GET'
-            && $request->url() === self::BASE_URL.'/customers?%24top=10');
+            && $request->url() === 'dynamics/customers?%24top=10');
 
         Event::assertDispatched(
             DynamicsResponseEvent::class,
@@ -322,7 +318,7 @@ final class DynamicsTest extends TestCase
         app(Dynamics::class)->post('customers', ['displayName' => '::name::']);
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
-            && $request->url() === self::BASE_URL.'/customers'
+            && $request->url() === 'dynamics/customers'
             && $request->data() === ['displayName' => '::name::']);
 
         Event::assertDispatched(DynamicsResponseEvent::class);
@@ -339,7 +335,7 @@ final class DynamicsTest extends TestCase
         app(Dynamics::class)->patch('customers(::id::)', ['displayName' => '::name::']);
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'PATCH'
-            && $request->url() === self::BASE_URL.'/customers(::id::)'
+            && $request->url() === 'dynamics/customers(::id::)'
             && $request->data() === ['displayName' => '::name::']);
 
         Event::assertDispatched(DynamicsResponseEvent::class);
@@ -356,7 +352,7 @@ final class DynamicsTest extends TestCase
         app(Dynamics::class)->put('customers(::id::)/picture/content', ['content' => '::content::']);
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'PUT'
-            && $request->url() === self::BASE_URL.'/customers(::id::)/picture/content'
+            && $request->url() === 'dynamics/customers(::id::)/picture/content'
             && $request->data() === ['content' => '::content::']);
 
         Event::assertDispatched(DynamicsResponseEvent::class);
@@ -373,7 +369,7 @@ final class DynamicsTest extends TestCase
         app(Dynamics::class)->delete('customers(::id::)');
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'DELETE'
-            && $request->url() === self::BASE_URL.'/customers(::id::)'
+            && $request->url() === 'dynamics/customers(::id::)'
             && $request->data() === []);
 
         Event::assertDispatched(DynamicsResponseEvent::class);
@@ -388,7 +384,7 @@ final class DynamicsTest extends TestCase
 
         app(Dynamics::class)->get('');
 
-        Http::assertSent(fn (Request $request): bool => $request->url() === self::BASE_URL.'/');
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'dynamics/');
     }
 
     #[Test]
@@ -409,7 +405,7 @@ final class DynamicsTest extends TestCase
             $this->assertSame($filter, $request->data()['$filter']);
             $this->assertSame('id,displayName', $request->data()['$select']);
 
-            return $request->url() === self::BASE_URL.'/customers'
+            return $request->url() === 'dynamics/customers'
                 .'?%24filter=displayName%20eq%20%27%3A%3Aname-a%20%26%20name-b%3A%3A%27&%24select=id%2CdisplayName';
         });
     }
@@ -490,7 +486,7 @@ final class DynamicsTest extends TestCase
         $this->assertSame('customers(::second::)', $entities->last()?->url());
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'GET'
-            && $request->url() === self::BASE_URL.'/customers?%24top=2');
+            && $request->url() === 'dynamics/customers?%24top=2');
     }
 
     #[Test]
@@ -598,7 +594,7 @@ final class DynamicsTest extends TestCase
         app(Dynamics::class)->lazy('customers', ['$top' => 999, '$skip' => 999], 50)->collect();
 
         Http::assertSent(fn (Request $request): bool => $request->data() === ['$top' => 50, '$skip' => 0]
-            && $request->url() === self::BASE_URL.'/customers?%24top=50&%24skip=0');
+            && $request->url() === 'dynamics/customers?%24top=50&%24skip=0');
     }
 
     #[Test]
@@ -632,7 +628,7 @@ final class DynamicsTest extends TestCase
             ->update(['displayName' => '::other-name::']);
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'PATCH'
-            && $request->url() === self::BASE_URL.'/customers(::id::)'
+            && $request->url() === 'dynamics/customers(::id::)'
             && $request->data() === ['displayName' => '::other-name::']
             && $request->hasHeader('If-Match', 'W/"::etag::"'));
 
@@ -652,7 +648,7 @@ final class DynamicsTest extends TestCase
             ->entity($entity)
             ->update(['displayName' => '::name::']);
 
-        Http::assertSent(fn (Request $request): bool => $request->url() === self::BASE_URL.'/customers(::id::)'
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'dynamics/customers(::id::)'
             && $request->hasHeader('If-Match', '*'));
     }
 
@@ -669,7 +665,7 @@ final class DynamicsTest extends TestCase
             ->entity($entity, 'vendors')
             ->update(['displayName' => '::name::']);
 
-        Http::assertSent(fn (Request $request): bool => $request->url() === self::BASE_URL.'/vendors(::id::)');
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'dynamics/vendors(::id::)');
     }
 
     #[Test]
@@ -723,7 +719,7 @@ final class DynamicsTest extends TestCase
         app(Dynamics::class)->entity($this->customer())->delete();
 
         Http::assertSent(fn (Request $request): bool => $request->method() === 'DELETE'
-            && $request->url() === self::BASE_URL.'/customers(::id::)'
+            && $request->url() === 'dynamics/customers(::id::)'
             && $request->hasHeader('If-Match', 'W/"::etag::"'));
     }
 
@@ -881,7 +877,7 @@ final class DynamicsTest extends TestCase
 
         $dynamics = app(Dynamics::class);
 
-        $this->assertSame(self::BASE_URL.'/', $dynamics->baseUrl());
+        $this->assertSame('dynamics/', $dynamics->baseUrl());
         $this->assertSame('https://login.microsoftonline.com/::tenant-id::/oauth2/v2.0/token', $dynamics->tokenUrl());
     }
 

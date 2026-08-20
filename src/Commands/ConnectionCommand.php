@@ -14,8 +14,6 @@ class ConnectionCommand extends Command
 
     protected $description = 'Test the connection to Dynamics';
 
-    public const string NAME_KEY = 'name';
-
     public function handle(Dynamics $dynamics): int
     {
         /** @var ?string $connection */
@@ -32,7 +30,7 @@ class ConnectionCommand extends Command
         }
 
         /** @var ?string $name */
-        $name = $response->json(static::NAME_KEY);
+        $name = $response->json('name');
 
         $this->info('Successfully connected to company "'.$name.'"');
 

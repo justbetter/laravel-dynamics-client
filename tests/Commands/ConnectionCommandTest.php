@@ -13,14 +13,10 @@ use PHPUnit\Framework\Attributes\Test;
 
 final class ConnectionCommandTest extends TestCase
 {
-    public const string TOKEN_URL = 'https://login.microsoftonline.com/::tenant-id::/oauth2/v2.0/token';
-
-    public const string BASE_URL = 'dynamics/';
-
     protected function fakeToken(): void
     {
         Http::fake([
-            self::TOKEN_URL => Http::response([
+            'https://login.microsoftonline.com/::tenant-id::/oauth2/v2.0/token' => Http::response([
                 'token_type' => 'Bearer',
                 'expires_in' => 3600,
                 'access_token' => '::access-token::',
@@ -34,7 +30,7 @@ final class ConnectionCommandTest extends TestCase
         $this->fakeToken();
 
         Http::fake([
-            self::BASE_URL => Http::response(['name' => '::company-name::']),
+            'dynamics/' => Http::response(['name' => '::company-name::']),
         ])->preventStrayRequests();
 
         /** @var PendingCommand $command */
@@ -45,7 +41,7 @@ final class ConnectionCommandTest extends TestCase
             ->expectsOutput('Successfully connected to company "::company-name::"')
             ->run();
 
-        Http::assertSent(fn ($request): bool => $request->url() === self::BASE_URL);
+        Http::assertSent(fn ($request): bool => $request->url() === 'dynamics/');
     }
 
     #[Test]
@@ -98,7 +94,7 @@ final class ConnectionCommandTest extends TestCase
         Http::clearResolvedInstance(HttpFactory::class);
 
         Http::fake([
-            self::TOKEN_URL => Http::response(['error' => '::error-code::'], 401),
+            'https://login.microsoftonline.com/::tenant-id::/oauth2/v2.0/token' => Http::response(['error' => '::error-code::'], 401),
         ])->preventStrayRequests();
 
         /** @var PendingCommand $command */
@@ -116,7 +112,7 @@ final class ConnectionCommandTest extends TestCase
         $this->fakeToken();
 
         Http::fake([
-            self::BASE_URL => Http::response(['error' => '::error-code::'], 404),
+            'dynamics/' => Http::response(['error' => '::error-code::'], 404),
         ])->preventStrayRequests();
 
         /** @var PendingCommand $command */
