@@ -179,21 +179,27 @@ class Dynamics
     /** @param  array<string, mixed>  $data */
     public function post(string $path, array $data = []): Response
     {
-        return $this->send(fn (PendingRequest $request): Response => $request->post($this->getUrl($path), $data));
+        return $this->send(fn (PendingRequest $request): Response => $request
+            ->when($data === [], fn (PendingRequest $request): PendingRequest => $request->withBody('{}'))
+            ->post($this->getUrl($path), $data));
     }
 
     /** @param  array<string, mixed>  $data */
     public function patch(string $path, array $data = []): Response
     {
         return $this->configureEntityTag()
-            ->send(fn (PendingRequest $request): Response => $request->patch($this->getUrl($path), $data));
+            ->send(fn (PendingRequest $request): Response => $request
+                ->when($data === [], fn (PendingRequest $request): PendingRequest => $request->withBody('{}'))
+                ->patch($this->getUrl($path), $data));
     }
 
     /** @param  array<string, mixed>  $data */
     public function put(string $path, array $data = []): Response
     {
         return $this->configureEntityTag()
-            ->send(fn (PendingRequest $request): Response => $request->put($this->getUrl($path), $data));
+            ->send(fn (PendingRequest $request): Response => $request
+                ->when($data === [], fn (PendingRequest $request): PendingRequest => $request->withBody('{}'))
+                ->put($this->getUrl($path), $data));
     }
 
     /** @param  array<string, mixed>  $data */
