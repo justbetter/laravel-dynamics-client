@@ -1,6 +1,16 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/2.0.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-dynamics-client/compare/2.1.0...main)
+## [2.1.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/2.1.0) - 2026-08-25
+
+### What's Changed
+* Fix empty JSON object for requests without parameters by @FinnPaes in https://github.com/justbetter/laravel-dynamics-client/pull/47
+
+### New Contributors
+* @FinnPaes made their first contribution in https://github.com/justbetter/laravel-dynamics-client/pull/47
+
+**Full Changelog**: https://github.com/justbetter/laravel-dynamics-client/compare/2.0.0...2.1.0
+
 ## [2.0.0](https://github.com/justbetter/laravel-dynamics-client/releases/tag/2.0.0) - 2026-08-20
 
 ### What's Changed
