@@ -206,6 +206,14 @@ class Dynamics
     }
 
     /** @param  array<string, mixed>  $data */
+    public function procedure(string $path, array $data = []): Response
+    {
+        return $this->send(fn (PendingRequest $request): Response => $request
+            ->when($data === [], fn (PendingRequest $request): PendingRequest => $request->withBody('{}'))
+            ->post($this->getUrl($path), $data));
+    }
+
+    /** @param  array<string, mixed>  $data */
     public function update(array $data = []): Response
     {
         $url = $this->scopedUrl();

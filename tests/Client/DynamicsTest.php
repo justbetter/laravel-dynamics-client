@@ -359,6 +359,40 @@ final class DynamicsTest extends TestCase
     }
 
     #[Test]
+    public function it_can_perform_a_procedure_request_without_body(): void
+    {
+        $this->setConnection();
+        Event::fake([DynamicsResponseEvent::class]);
+        Http::fake();
+        $this->fakeAuthentication();
+
+        app(Dynamics::class)->procedure('itemJournals(::id::)/Microsoft.NAV.post');
+
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
+            && $request->url() === 'dynamics/itemJournals(::id::)/Microsoft.NAV.post'
+            && $request->data() === []);
+
+        Event::assertDispatched(DynamicsResponseEvent::class);
+    }
+
+    #[Test]
+    public function it_can_perform_a_procedure_request_with_body(): void
+    {
+        $this->setConnection();
+        Event::fake([DynamicsResponseEvent::class]);
+        Http::fake();
+        $this->fakeAuthentication();
+
+        app(Dynamics::class)->procedure('itemJournals(::id::)/Microsoft.NAV.post', ['content' => '::content::']);
+
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
+            && $request->url() === 'dynamics/itemJournals(::id::)/Microsoft.NAV.post'
+            && $request->data() === ['content' => '::content::']);
+
+        Event::assertDispatched(DynamicsResponseEvent::class);
+    }
+
+    #[Test]
     public function it_can_perform_a_delete_request(): void
     {
         $this->setConnection();
