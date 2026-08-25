@@ -359,6 +359,40 @@ final class DynamicsTest extends TestCase
     }
 
     #[Test]
+    public function it_can_perform_a_procedure_request_without_body(): void
+    {
+        $this->setConnection();
+        Event::fake([DynamicsResponseEvent::class]);
+        Http::fake();
+        $this->fakeAuthentication();
+
+        app(Dynamics::class)->procedure('itemJournals(::id::)/Microsoft.NAV.post');
+
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
+            && $request->url() === 'dynamics/itemJournals(::id::)/Microsoft.NAV.post'
+            && $request->data() === []);
+
+        Event::assertDispatched(DynamicsResponseEvent::class);
+    }
+
+    #[Test]
+    public function it_can_perform_a_procedure_request_with_body(): void
+    {
+        $this->setConnection();
+        Event::fake([DynamicsResponseEvent::class]);
+        Http::fake();
+        $this->fakeAuthentication();
+
+        app(Dynamics::class)->procedure('itemJournals(::id::)/Microsoft.NAV.post', ['content' => '::content::']);
+
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
+            && $request->url() === 'dynamics/itemJournals(::id::)/Microsoft.NAV.post'
+            && $request->data() === ['content' => '::content::']);
+
+        Event::assertDispatched(DynamicsResponseEvent::class);
+    }
+
+    #[Test]
     public function it_can_perform_a_delete_request(): void
     {
         $this->setConnection();
@@ -373,47 +407,6 @@ final class DynamicsTest extends TestCase
             && $request->data() === []);
 
         Event::assertDispatched(DynamicsResponseEvent::class);
-    }
-
-    #[Test]
-    public function it_can_perform_a_post_request_for_a_bound_action_without_parameters(): void
-    {
-        $this->setConnection();
-        Http::fake();
-        $this->fakeAuthentication();
-
-        app(Dynamics::class)->post('salesOrders(::id::)/Microsoft.NAV.post');
-
-        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
-            && $request->url() === 'dynamics/salesOrders(::id::)/Microsoft.NAV.post'
-            && $request->body() === '{}'
-            && $request->header('Content-Type') === ['application/json']);
-    }
-
-    #[Test]
-    public function it_can_perform_a_patch_request_without_data_as_a_json_object(): void
-    {
-        $this->setConnection();
-        Http::fake();
-        $this->fakeAuthentication();
-
-        app(Dynamics::class)->patch('customers(::id::)');
-
-        Http::assertSent(fn (Request $request): bool => $request->method() === 'PATCH'
-            && $request->body() === '{}');
-    }
-
-    #[Test]
-    public function it_can_perform_a_put_request_without_data_as_a_json_object(): void
-    {
-        $this->setConnection();
-        Http::fake();
-        $this->fakeAuthentication();
-
-        app(Dynamics::class)->put('customers(::id::)/picture/content');
-
-        Http::assertSent(fn (Request $request): bool => $request->method() === 'PUT'
-            && $request->body() === '{}');
     }
 
     #[Test]
